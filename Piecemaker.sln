@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32630.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piecemaker.Blazor", "Piecemaker.Blazor\Piecemaker.Blazor.csproj", "{625A266D-EBAD-41E0-8006-7255FBCB3E79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piecemaker.Engine", "Piecemaker.Engine\Piecemaker.Engine.csproj", "{DF4A8D7C-1563-44B9-994A-B74987A3D7AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chess.Core", "Chess.Core", "{4732A334-7A0D-4DD5-9F70-07770240C94D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessDotCore", "Chess.Core\ChessDotCore\ChessDotCore.csproj", "{208E8DBD-7C19-40BF-AB63-707D9F72D9B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessDotCore.Variants", "Chess.Core\ChessDotCore.Variants\ChessDotCore.Variants.csproj", "{E3C66923-2262-4A9B-B643-3D175D48DC32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piecemaker.Cli", "Piecemaker.Console\Piecemaker.Cli.csproj", "{230ACCA7-F89A-4A26-8008-3D06092A506E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{625A266D-EBAD-41E0-8006-7255FBCB3E79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{625A266D-EBAD-41E0-8006-7255FBCB3E79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{625A266D-EBAD-41E0-8006-7255FBCB3E79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{625A266D-EBAD-41E0-8006-7255FBCB3E79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF4A8D7C-1563-44B9-994A-B74987A3D7AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF4A8D7C-1563-44B9-994A-B74987A3D7AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF4A8D7C-1563-44B9-994A-B74987A3D7AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF4A8D7C-1563-44B9-994A-B74987A3D7AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{208E8DBD-7C19-40BF-AB63-707D9F72D9B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{208E8DBD-7C19-40BF-AB63-707D9F72D9B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{208E8DBD-7C19-40BF-AB63-707D9F72D9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{208E8DBD-7C19-40BF-AB63-707D9F72D9B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3C66923-2262-4A9B-B643-3D175D48DC32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3C66923-2262-4A9B-B643-3D175D48DC32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3C66923-2262-4A9B-B643-3D175D48DC32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3C66923-2262-4A9B-B643-3D175D48DC32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{230ACCA7-F89A-4A26-8008-3D06092A506E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{230ACCA7-F89A-4A26-8008-3D06092A506E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{230ACCA7-F89A-4A26-8008-3D06092A506E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{230ACCA7-F89A-4A26-8008-3D06092A506E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{208E8DBD-7C19-40BF-AB63-707D9F72D9B7} = {4732A334-7A0D-4DD5-9F70-07770240C94D}
+		{E3C66923-2262-4A9B-B643-3D175D48DC32} = {4732A334-7A0D-4DD5-9F70-07770240C94D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96A68F0F-1A87-4137-8156-5319E260F639}
+	EndGlobalSection
+EndGlobal
