@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chess.Core\ChessDotCore.Variants\ChessDotCore.Variants.csproj" />
     <ProjectReference Include="..\Chess.Core\ChessDotCore\ChessDotCore.csproj" />
   </ItemGroup>
 
