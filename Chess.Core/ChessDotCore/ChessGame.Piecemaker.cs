@@ -6,7 +6,7 @@ namespace ChessDotCore
 {
 	public partial class ChessGame
 	{
-		public const int StartingMana = 2;
+		public const int StartingMana = 21;
 		public const int ManaGain = 2;
 		public int WhiteMana { get; protected set; } = StartingMana;
 		public int BlackMana { get; protected set; } = StartingMana;

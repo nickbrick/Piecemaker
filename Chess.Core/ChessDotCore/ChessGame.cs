@@ -509,7 +509,7 @@ namespace ChessDotCore
         public Piece GetPieceAt(Position position)
         {
             ChessUtilities.ThrowIfNull(position, nameof(position));
-            return GetPieceAt(position.File, position.Rank);
+            return position.Summon ?? GetPieceAt(position.File, position.Rank);
         }
 
         public Piece GetPieceAt(File file, int rank)
@@ -533,16 +533,16 @@ namespace ChessDotCore
             ChessUtilities.ThrowIfNull(move, nameof(move));
             return IsValidMove(move, validateCheck, true);
         }
-
+        //TODO summon under check
         protected virtual bool IsValidMove(Move move, bool validateCheck, bool careAboutWhoseTurnItIs)
         {
             ChessUtilities.ThrowIfNull(move, nameof(move));
             Piece piece;
 
             // Summon
-            Piece summon = move.OriginalPosition.Summon;
-            if (summon != null)
+            if (move.IsSummon)
             {
+                Piece summon = move.OriginalPosition.Summon;
                 if (GetPieceAt(move.NewPosition) != null) return false;
                 if (!CanAffordSummon(summon)) return false;
                 if (!IsPlayersKingAdjacentTo(summon.Owner, move.NewPosition)) return false;
@@ -561,11 +561,11 @@ namespace ChessDotCore
             {
                 return false;
             }
-            if (!piece.IsValidMove(move, this) && summon == null)
+            if (!piece.IsValidMove(move, this) && !move.IsSummon )
             {
                 return false;
             }
-            if (validateCheck && summon == null)
+            if (validateCheck)
             {
                 if (!isCastle && WouldBeInCheckAfter(move, move.Player))
                 {
@@ -1236,7 +1236,8 @@ namespace ChessDotCore
             else
             {
                 Piece p = copy.GetPieceAt(move.OriginalPosition);
-                copy.SetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank, null);
+                if (!move.IsSummon)
+                    copy.SetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank, null);
                 copy.SetPieceAt(move.NewPosition.File, move.NewPosition.Rank, p);
             }
             return copy.IsInCheck(player);

@@ -6,6 +6,7 @@
         public Position NewPosition { get; set; }
         public Player Player { get; set; }
         public char? Promotion { get; set; }
+        public bool IsSummon => OriginalPosition.Summon != null;
 
         protected Move() { }
 
