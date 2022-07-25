@@ -19,31 +19,12 @@ namespace ChessDotCore
     public class Position
     {
         File _file;
-        public File File
-        {
-            get
-            {
-                return _file;
-            }
-            set
-            {
-                _file = value;
-            }
-        }
+        public File File { get { return _file; } set { _file = value; } }
 
         int _rank;
-        public int Rank
-        {
-            get
-            {
-                return _rank;
-            }
-            set
-            {
-                _rank = value;
-            }
-        }
-        public Position() {}
+        public int Rank { get { return _rank; } set { _rank = value; } }
+        public Piece Summon { get; private set; }
+        public Position() { }
 
         public Position(File file, int rank)
         {
@@ -57,54 +38,89 @@ namespace ChessDotCore
             {
                 throw new ArgumentNullException(nameof(position));
             }
-            if (position.Length != 2)
+            //if (position.Length != 2)
+            //{
+            //    throw new ArgumentException("Length of `pos` is not 2.");
+            //}
+            if (position.Length == 1)
             {
-                throw new ArgumentException("Length of `pos` is not 2.");
-            }
+                // Summon
+                var piece = position;
 
-            position = position.ToUpperInvariant();
-            char file = position[0];
-            char rank = position[1];
-            switch (file)
-            {
-                case 'A':
-                    _file = File.A;
-                    break;
-                case 'B':
-                    _file = File.B;
-                    break;
-                case 'C':
-                    _file = File.C;
-                    break;
-                case 'D':
-                    _file = File.D;
-                    break;
-                case 'E':
-                    _file = File.E;
-                    break;
-                case 'F':
-                    _file = File.F;
-                    break;
-                case 'G':
-                    _file = File.G;
-                    break;
-                case 'H':
-                    _file = File.H;
-                    break;
-                default:
-                    throw new ArgumentException("First char of `pos` not in range A-F.");
-            }
-
-            if (int.TryParse(rank.ToString(), out _rank))
-            {
-                if (_rank < 1 || _rank > 8)
+                switch (piece)
                 {
-                    throw new ArgumentException("Second char of `pos` not in range 1-8.");
+                    case "Q":
+                        Summon = new Pieces.Queen(Player.White); break;
+                    case "R":
+                        Summon = new Pieces.Rook(Player.White); break;
+                    case "B":
+                        Summon = new Pieces.Bishop(Player.White); break;
+                    case "N":
+                        Summon = new Pieces.Knight(Player.White); break;
+                    case "P":
+                        Summon = new Pieces.Pawn(Player.White); break;
+                    case "q":
+                        Summon = new Pieces.Queen(Player.Black); break;
+                    case "r":
+                        Summon = new Pieces.Rook(Player.Black); break;
+                    case "b":
+                        Summon = new Pieces.Bishop(Player.Black); break;
+                    case "n":
+                        Summon = new Pieces.Knight(Player.Black); break;
+                    case "p":
+                        Summon = new Pieces.Pawn(Player.Black); break;
+                    default:
+                        throw new ArgumentException("Invalid summon. Expected 'Q', 'q', 'R', 'r', 'B', 'b', 'N', 'n', 'P', 'p'");
                 }
+                File = File.None;
+                Rank = 1;
             }
             else
             {
-                throw new ArgumentException("Second char of `pos` not in range 1-8.");
+                position = position.ToUpperInvariant();
+                char file = position[0];
+                char rank = position[1];
+                switch (file)
+                {
+                    case 'A':
+                        _file = File.A;
+                        break;
+                    case 'B':
+                        _file = File.B;
+                        break;
+                    case 'C':
+                        _file = File.C;
+                        break;
+                    case 'D':
+                        _file = File.D;
+                        break;
+                    case 'E':
+                        _file = File.E;
+                        break;
+                    case 'F':
+                        _file = File.F;
+                        break;
+                    case 'G':
+                        _file = File.G;
+                        break;
+                    case 'H':
+                        _file = File.H;
+                        break;
+                    default:
+                        throw new ArgumentException("First char of `pos` not in range A-F.");
+                }
+
+                if (int.TryParse(rank.ToString(), out _rank))
+                {
+                    if (_rank < 1 || _rank > 8)
+                    {
+                        throw new ArgumentException("Second char of `pos` not in range 1-8.");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Second char of `pos` not in range 1-8.");
+                }
             }
         }
 
@@ -143,6 +159,7 @@ namespace ChessDotCore
 
         public override string ToString()
         {
+            if (Summon != null) return Summon.GetFenCharacter().ToString().ToUpper();
             return File.ToString() + Rank.ToString(CultureInfo.InvariantCulture);
         }
     }

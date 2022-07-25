@@ -2,29 +2,10 @@
 {
     public class Move
     {
-        public Position OriginalPosition
-        {
-            get;
-            set;
-        }
-
-        public Position NewPosition
-        {
-            get;
-            set;
-        }
-
-        public Player Player
-        {
-            get;
-            set;
-        }
-
-        public char? Promotion
-        {
-            get;
-            set;
-        }
+        public Position OriginalPosition { get; set; }
+        public Position NewPosition { get; set; }
+        public Player Player { get; set; }
+        public char? Promotion { get; set; }
 
         protected Move() { }
 

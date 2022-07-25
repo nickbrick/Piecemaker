@@ -7,51 +7,21 @@ using System.Text;
 
 namespace ChessDotCore
 {
-    public class ChessGame
+    public partial class ChessGame
     {
         bool _drawn = false;
         string _drawReason = null;
         Player _resigned = Player.None;
 
-        public bool DrawClaimed
-        {
-            get
-            {
-                return _drawn;
-            }
-        }
+        public bool DrawClaimed { get { return _drawn; } }
 
-        public string DrawReason
-        {
-            get
-            {
-                return _drawReason;
-            }
-        }
+        public string DrawReason { get { return _drawReason; } }
 
-        public Player Resigned
-        {
-            get
-            {
-                return _resigned;
-            }
-        }
+        public Player Resigned { get { return _resigned; } }
 
-        protected virtual int[] AllowedFenPartsLength
-        {
-            get
-            {
-                return new int[1] { 6 };
-            }
-        }
+        protected virtual int[] AllowedFenPartsLength { get { return new int[1] { 6 }; } }
 
-        protected virtual bool UseTildesInFenGeneration
-        {
-            get
-            {
-                return false;
-            }
-        }
+        protected virtual bool UseTildesInFenGeneration { get { return false; } }
 
         public File InitialWhiteRookFileKingsideCastling { get; protected set; }
         public File InitialWhiteRookFileQueensideCastling { get; protected set; }
@@ -75,13 +45,7 @@ namespace ChessDotCore
             { 'P', new Pawn(Player.White) },
             { 'p', new Pawn(Player.Black) },
         };
-        protected virtual Dictionary<char, Piece> FenMappings
-        {
-            get
-            {
-                return fenMappings;
-            }
-        }
+        protected virtual Dictionary<char, Piece> FenMappings { get { return fenMappings; } }
 
         public virtual Piece MapPgnCharToPiece(char c, Player owner)
         {
@@ -107,7 +71,11 @@ namespace ChessDotCore
                     return owner == Player.White ? FenMappings['P'] : FenMappings['p'];
             }
         }
-
+        public virtual Piece MapPgnCharToPiece(string s, Player owner)
+        {
+            char c = s.ToCharArray()[0];
+            return MapPgnCharToPiece(c, owner);
+        }
         public virtual bool NeedsPgnMoveSpecialTreatment(string move, Player player) { return false; }
         public virtual bool HandleSpecialPgnMove(string move, Player player) { return false; }
 
@@ -122,29 +90,12 @@ namespace ChessDotCore
             }
         }
 
-        public Player WhoseTurn
-        {
-            get;
-            protected set;
-        }
-
+        public Player WhoseTurn { get; protected set; }
         protected int i_halfMoveClock = 0;
-        public int HalfMoveClock
-        {
-            get
-            {
-                return i_halfMoveClock;
-            }
-        }
+        public int HalfMoveClock { get { return i_halfMoveClock; } }
 
         protected int i_fullMoveNumber = 1;
-        public int FullMoveNumber
-        {
-            get
-            {
-                return i_fullMoveNumber;
-            }
-        }
+        public int FullMoveNumber { get { return i_fullMoveNumber; } }
 
         public ReadOnlyCollection<Piece> PiecesOnBoard
         {
@@ -154,21 +105,9 @@ namespace ChessDotCore
             }
         }
 
-        public virtual int BoardWidth
-        {
-            get
-            {
-                return 8;
-            }
-        }
+        public virtual int BoardWidth { get { return 8; } }
 
-        public virtual int BoardHeight
-        {
-            get
-            {
-                return 8;
-            }
-        }
+        public virtual int BoardHeight { get { return 8; } }
 
         protected Piece[][] Board;
         public Piece[][] GetBoard()
@@ -189,37 +128,11 @@ namespace ChessDotCore
             }
         }
 
-        public bool CanBlackCastleKingSide
-        {
-            get;
-            protected set;
-        }
-
-        public bool CanBlackCastleQueenSide
-        {
-            get;
-            protected set;
-        }
-
-        public bool CanWhiteCastleKingSide
-        {
-            get;
-            protected set;
-        }
-
-        public bool CanWhiteCastleQueenSide
-        {
-            get;
-            protected set;
-        }
-
-        protected virtual bool CastlingCanBeLegal
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool CanBlackCastleKingSide { get; protected set; }
+        public bool CanBlackCastleQueenSide { get; protected set; }
+        public bool CanWhiteCastleKingSide { get; protected set; }
+        public bool CanWhiteCastleQueenSide { get; protected set; }
+        protected virtual bool CastlingCanBeLegal { get { return false; } }
 
         protected static Piece[][] CloneBoard(Piece[][] originalBoard)
         {
@@ -253,14 +166,14 @@ namespace ChessDotCore
             Piece o = null;
             Board = new Piece[8][]
             {
-                new[] { rb, nb, bb, qb, kb, bb, nb, rb },
-                new[] { pb, pb, pb, pb, pb, pb, pb, pb },
+                new[] { o, o, o, o, kb, o, o, o},
                 new[] { o, o, o, o, o, o, o, o },
                 new[] { o, o, o, o, o, o, o, o },
                 new[] { o, o, o, o, o, o, o, o },
                 new[] { o, o, o, o, o, o, o, o },
-                new[] { pw, pw, pw, pw, pw, pw, pw, pw },
-                new[] { rw, nw, bw, qw, kw, bw, nw, rw }
+                new[] { o, o, o, o, o, o, o, o },
+                new[] { o, o, o, o, o, o, o, o },
+                new[] { o, o, o, o, kw, o, o, o}
             };
             CanBlackCastleKingSide = CanBlackCastleQueenSide = CanWhiteCastleKingSide = CanWhiteCastleQueenSide = CastlingCanBeLegal;
             InitialBlackRookFileKingsideCastling = InitialWhiteRookFileKingsideCastling = File.H;
@@ -624,9 +537,22 @@ namespace ChessDotCore
         protected virtual bool IsValidMove(Move move, bool validateCheck, bool careAboutWhoseTurnItIs)
         {
             ChessUtilities.ThrowIfNull(move, nameof(move));
+            Piece piece;
+
+            // Summon
+            Piece summon = move.OriginalPosition.Summon;
+            if (summon != null)
+            {
+                if (GetPieceAt(move.NewPosition) != null) return false;
+                if (!CanAffordSummon(summon)) return false;
+                if (!IsPlayersKingAdjacentTo(summon.Owner, move.NewPosition)) return false;
+                piece = summon;
+            }
+            else
+                piece = GetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank);
+
             if (move.OriginalPosition.Equals(move.NewPosition))
                 return false;
-            Piece piece = GetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank);
             if (careAboutWhoseTurnItIs && move.Player != WhoseTurn) return false;
             if (piece == null || piece.Owner != move.Player) return false;
             Piece pieceAtDestination = GetPieceAt(move.NewPosition);
@@ -635,11 +561,11 @@ namespace ChessDotCore
             {
                 return false;
             }
-            if (!piece.IsValidMove(move, this))
+            if (!piece.IsValidMove(move, this) && summon == null)
             {
                 return false;
             }
-            if (validateCheck)
+            if (validateCheck && summon == null)
             {
                 if (!isCastle && WouldBeInCheckAfter(move, move.Player))
                 {
@@ -707,7 +633,8 @@ namespace ChessDotCore
 
         public virtual MoveType MakeMove(Move move, bool alreadyValidated, out Piece captured)
         {
-            Piece movingPiece = GetPieceAt(move.OriginalPosition);
+            Piece movingPiece = move.OriginalPosition.Summon ?? GetPieceAt(move.OriginalPosition);
+
             List<Position> ambiguities = GetAmbiguities(move, movingPiece);
             CastlingType castle;
             int lastHalfMoveClock = i_halfMoveClock;
@@ -738,13 +665,13 @@ namespace ChessDotCore
                 return MoveType.Invalid;
             }
             var type = MoveType.Move;
-            Piece movingPiece = GetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank);
+            Piece movingPiece = move.OriginalPosition.Summon ?? GetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank);
 
             if (movingPiece == null)
             {
                 throw new InvalidOperationException("Source piece does not exist.");
             }
- 
+
             Piece capturedPiece = GetPieceAt(move.NewPosition.File, move.NewPosition.Rank);
             captured = capturedPiece;
             Piece newPiece = movingPiece;
@@ -833,8 +760,19 @@ namespace ChessDotCore
             }
             if (castle == CastlingType.None)
             {
+                Piece summon = move.OriginalPosition.Summon;
                 SetPieceAt(move.NewPosition.File, move.NewPosition.Rank, newPiece);
-                SetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank, null);
+                if (summon == null)
+                {
+                    SetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank, null);
+                    AddMana(move.Player, ManaGain);
+                }
+                else
+                {
+                    type |= MoveType.Summon;
+                    AddMana(move.Player, -GetCost(move.Player, summon));
+                    AddCost(move.Player, summon);
+                }
             }
             WhoseTurn = ChessUtilities.GetOpponentOf(move.Player);
             castleType = castle;
@@ -1332,6 +1270,14 @@ namespace ChessDotCore
                 DrawReason = DrawReason,
                 Resigned = Resigned
             };
+        }
+        public struct PieceCosts
+        {
+            public int Queen;
+            public int Rook;
+            public int Bishop;
+            public int Knight;
+            public int Pawn;
         }
     }
 }
