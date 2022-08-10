@@ -19,7 +19,7 @@ namespace ChessDotCore.Pieces
             set;
         }
 
-        public Pawn() : this(Player.None) {}
+        public Pawn() : this(Player.None) { }
 
         public Pawn(Player owner)
         {
@@ -39,6 +39,11 @@ namespace ChessDotCore.Pieces
         public override char GetFenCharacter()
         {
             return Owner == Player.White ? 'P' : 'p';
+        }
+
+        public override string GetUnicodeGlyph()
+        {
+            return Owner == Player.White ? "♙" : "♟";
         }
 
         protected virtual char[] ValidPromotionPieces
@@ -62,36 +67,41 @@ namespace ChessDotCore.Pieces
                 promotion = game.MapPgnCharToPiece(char.ToUpper(move.Promotion.Value), move.Player);
             }
             var posDelta = new PositionDistance(origin, destination);
-            if ((posDelta.DistanceX != 0 || posDelta.DistanceY != 1) && (posDelta.DistanceX != 1 || posDelta.DistanceY != 1)
-                        && (posDelta.DistanceX != 0 || posDelta.DistanceY != 2))
+            if (!(
+                   (posDelta.DistanceX == 0 && posDelta.DistanceY == 1)
+                || (posDelta.DistanceX == 1 && posDelta.DistanceY == 1)
+                //|| (posDelta.DistanceX == 0 && posDelta.DistanceY == 2) // [piecemaker] no double advance
+                ))
                 return false;
             if (Owner == Player.White)
             {
                 if (origin.Rank > destination.Rank)
                     return false;
-                if (destination.Rank == 8)
-                {
-                    if (promotion == null)
-                        return false;
-                    if (promotion.Owner != Player.White)
-                        return false;
-                    if (!ValidPromotionPieces.Contains(promotion.GetFenCharacter()))
-                        return false;
-                }
+                // [piecemaker] no promotion
+                //if (destination.Rank == 8)
+                //{
+                //    if (promotion == null)
+                //        return false;
+                //    if (promotion.Owner != Player.White)
+                //        return false;
+                //    if (!ValidPromotionPieces.Contains(promotion.GetFenCharacter()))
+                //        return false;
+                //}
             }
             if (Owner == Player.Black)
             {
                 if (origin.Rank < destination.Rank)
                     return false;
-                if (destination.Rank == 1)
-                {
-                    if (promotion == null)
-                        return false;
-                    if (promotion.Owner != Player.Black)
-                        return false;
-                    if (!ValidPromotionPieces.Contains(promotion.GetFenCharacter()))
-                        return false;
-                }
+                // [piecemaker] no promotion
+                //if (destination.Rank == 1)
+                //{
+                //    if (promotion == null)
+                //        return false;
+                //    if (promotion.Owner != Player.Black)
+                //        return false;
+                //    if (!ValidPromotionPieces.Contains(promotion.GetFenCharacter()))
+                //        return false;
+                //}
             }
             bool checkEnPassant = false;
             if (posDelta.DistanceY == 2)

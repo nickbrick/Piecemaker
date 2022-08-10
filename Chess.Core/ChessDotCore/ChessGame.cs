@@ -533,7 +533,7 @@ namespace ChessDotCore
             ChessUtilities.ThrowIfNull(move, nameof(move));
             return IsValidMove(move, validateCheck, true);
         }
-        //TODO summon under check
+        
         protected virtual bool IsValidMove(Move move, bool validateCheck, bool careAboutWhoseTurnItIs)
         {
             ChessUtilities.ThrowIfNull(move, nameof(move));
@@ -561,7 +561,7 @@ namespace ChessDotCore
             {
                 return false;
             }
-            if (!piece.IsValidMove(move, this) && !move.IsSummon )
+            if (!piece.IsValidMove(move, this) && !move.IsSummon) // Summon validation happens outside of Piece subclasses
             {
                 return false;
             }
@@ -688,11 +688,11 @@ namespace ChessDotCore
                     captured = GetPieceAt(move.NewPosition.File, move.OriginalPosition.Rank);
                     SetPieceAt(move.NewPosition.File, move.OriginalPosition.Rank, null);
                 }
-                if (move.NewPosition.Rank == (move.Player == Player.White ? 8 : 1))
-                {
-                    newPiece = MapPgnCharToPiece(move.Promotion.Value, move.Player).AsPromotion();
-                    type |= MoveType.Promotion;
-                }
+                //if (move.NewPosition.Rank == (move.Player == Player.White ? 8 : 1))
+                //{
+                //    newPiece = MapPgnCharToPiece(move.Promotion.Value, move.Player).AsPromotion();
+                //    type |= MoveType.Promotion;
+                //}
             }
             else if (movingPiece is King)
             {
@@ -1056,9 +1056,17 @@ namespace ChessDotCore
                 for (int f = 0; f < Board[8 - r].Length; f++)
                 {
                     Piece p = GetPieceAt((File)f, r);
+                    var pos = new Position((File)f, r);
+                    // summon
+                    if (p == null)
+                    {
+                        var pieces = new List<Piece> { new Queen(player), new Rook(player), new Bishop(player), new Knight(player), new Pawn(player) };
+                        var moves = pieces.Select(p=> new Move(new Position(p.GetFenCharacter().ToString()), pos, player));
+                        validMoves.AddRange(moves.Where(move => IsSummonValid(move)));
+                    }
                     if (p != null && p.Owner == player)
                     {
-                        validMoves.AddRange(GetValidMoves(new Position((File)f, r), returnIfAny));
+                        validMoves.AddRange(GetValidMoves(pos, returnIfAny));
                         if (returnIfAny && validMoves.Count > 0)
                         {
                             return new ReadOnlyCollection<Move>(validMoves);

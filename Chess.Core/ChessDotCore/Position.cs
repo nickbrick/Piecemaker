@@ -159,8 +159,8 @@ namespace ChessDotCore
 
         public override string ToString()
         {
-            if (Summon != null) return Summon.GetFenCharacter().ToString().ToUpper();
-            return File.ToString() + Rank.ToString(CultureInfo.InvariantCulture);
+            if (Summon != null) return Summon.GetFenCharacter().ToString();
+            return File.ToString().ToLower() + Rank.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

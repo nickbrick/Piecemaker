@@ -52,6 +52,11 @@ namespace ChessDotCore.Pieces
             return Owner == Player.White ? 'K' : 'k';
         }
 
+        public override string GetUnicodeGlyph()
+        {
+            return Owner == Player.White ? "♔" : "♚";
+        }
+
         public override bool IsValidMove(Move move, ChessGame game)
         {
             ChessUtilities.ThrowIfNull(move, nameof(move));

@@ -1,0 +1,87 @@
+﻿@implements IDisposable
+@inject IJSRuntime JsRuntime
+@using ChessDotCore.Pieces;
+@using ChessDotCore;
+<h3>Table @Table.Id.ToString("x")</h3>
+<div id="myBoard" style="width: 400px"></div>
+<ul>
+    @foreach (var line in Status)
+    {
+        <li>@line</li>
+    }
+
+</ul>
+<p>Piecemaker alpha @System.Environment.GetEnvironmentVariable("HEROKU_RELEASE_VERSION")</p>
+@code {
+    [Parameter]
+    public Client Client { get; set; }
+    public int DesiredGameId { get; set; }
+    private Table Table;
+    private string[] Status => GetStatusString();
+    private string SimpleFen => Table.Game.GetFen().Split()[0];
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+    public GameComponent()
+    {
+        // TODO get game by desired ID
+        Table = Program.Tables.First();
+        Table.ValidMoveWasMade += Table_ValidMoveWasMade;
+        Client = Table.Join();
+
+    }
+    protected async override void OnInitialized()
+    {
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("setValidMoves", Client.ValidMoves, Client.Player.ToString().ToLower()[0]);
+        if (firstRender)
+        {
+
+            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen());
+            await InitGameComponentInstance();
+
+        }
+    }
+    private async Task InitGameComponentInstance()
+    {
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("registerGameComponentObject", dotNetObjRef);
+    }
+    [JSInvokable("MakeMove")]
+    public async Task<bool> MakeMove(string move)
+    {
+        var result = Client.MakeMove(move);
+        if (!result)
+        {
+            await JSRuntime.InvokeVoidAsync("setPosition", SimpleFen);
+        }
+        StateHasChanged();
+        return result;
+    }
+    private async void Table_ValidMoveWasMade(object sender, MoveEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
+        await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
+        await InvokeAsync(() =>
+        {
+            System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
+            StateHasChanged();
+        });
+    }
+    private string[] GetStatusString()
+    {
+        return new string[] {
+            $"You are {Client.Id} ({Client.Player})",
+            $"Opponent: {Client.GetOpponentClient()?.Id.ToString() ?? "none"}",
+            $"{Table.Game.WhoseTurn} to play",
+            $"♔: {Table.Game.GetMana(Player.White)} | ♕: {Table.Game.GetCost<Queen>(Player.White)} | ♖: {Table.Game.GetCost<Rook>(Player.White)} | ♗: {Table.Game.GetCost<Bishop>(Player.White)} | ♘: {Table.Game.GetCost<Knight>(Player.White)} | ♙: {Table.Game.GetCost<Pawn>(Player.White)}",
+            $"♚: {Table.Game.GetMana(Player.Black)} | ♛: {Table.Game.GetCost<Queen>(Player.Black)} | ♜: {Table.Game.GetCost<Rook>(Player.Black)} | ♝: {Table.Game.GetCost<Bishop>(Player.Black)} | ♞: {Table.Game.GetCost<Knight>(Player.Black)} | ♟: {Table.Game.GetCost<Pawn>(Player.Black)}"
+        };
+    }
+    void IDisposable.Dispose()
+    {
+        Table.Disconnect(Client);
+        System.Diagnostics.Debug.WriteLine($"{Client.Id} disconnected.");
+    }
+}

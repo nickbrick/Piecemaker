@@ -20,6 +20,7 @@ namespace ChessDotCore
 		};
 		public PieceCosts WhitePieceCosts = InitialPieceCost;
 		public PieceCosts BlackPieceCosts = InitialPieceCost;
+		public System.Collections.ObjectModel.ReadOnlyCollection<Move> ValidMoves => GetValidMoves(WhoseTurn);
 		public int GetMana(Player player)
         {
 			return player == Player.White ? WhiteMana : BlackMana;
@@ -44,6 +45,25 @@ namespace ChessDotCore
 			if (piece is Pieces.Knight)
 				return costs.Knight;
 			if (piece is Pieces.Pawn)
+				return costs.Pawn;
+
+			throw new ArgumentException("Invalid piece.");
+		}
+		public int GetCost<T>(Player player) where T : Piece
+		{
+			PieceCosts costs;
+			if (player == Player.White) costs = WhitePieceCosts;
+			else costs = BlackPieceCosts;
+
+			if (typeof(T) == typeof(Pieces.Queen))
+				return costs.Queen;
+			if (typeof(T) == typeof(Pieces.Rook))
+				return costs.Rook;
+			if (typeof(T) == typeof(Pieces.Bishop))
+				return costs.Bishop;
+			if (typeof(T) == typeof(Pieces.Knight))
+				return costs.Knight;
+			if (typeof(T) == typeof(Pieces.Pawn))
 				return costs.Pawn;
 
 			throw new ArgumentException("Invalid piece.");
@@ -97,7 +117,7 @@ namespace ChessDotCore
 			}
 			return false;
 		}
-		private bool CanAffordSummon(Piece summon)
+		internal bool CanAffordSummon(Piece summon)
 		{
 			int mana;
 			PieceCosts costs;
@@ -124,5 +144,13 @@ namespace ChessDotCore
 				return mana >= costs.Pawn;
 			return false;
 		}
+		private bool IsSummonValid(Move move)
+        {
+			Position pos = move.NewPosition;
+			if (!move.IsSummon) return false;
+			Piece summon = move.OriginalPosition.Summon;
+
+			return IsPlayersKingAdjacentTo(move.Player, pos) && CanAffordSummon(summon);
+        }
 	}
 }

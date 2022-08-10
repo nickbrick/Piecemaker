@@ -56,6 +56,7 @@ namespace ChessDotCore
         }
 
         public abstract char GetFenCharacter();
+        public abstract string GetUnicodeGlyph();
         public abstract bool IsValidMove(Move move, ChessGame game);
         public abstract ReadOnlyCollection<Move> GetValidMoves(Position from, bool returnIfAny, ChessGame game, Func<Move, bool> gameMoveValidator);
     }

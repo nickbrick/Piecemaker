@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ChessDotCore;
 
@@ -16,6 +17,9 @@ namespace Piecemaker.Console
             {
                 Helpers.PrintBoard(game);
                 System.Console.WriteLine($"{game.WhoseTurn}'s move? (format {{from}} {{to}})");
+                var moves = game.ValidMoves;
+                Debug.WriteLine(String.Join(", ",moves));
+
                 MoveType result;
                 Move move;
                 do
