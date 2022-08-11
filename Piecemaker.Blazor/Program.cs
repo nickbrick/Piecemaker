@@ -14,7 +14,8 @@ namespace Piecemaker.Blazor
 {
     public class Program
     {
-        internal static List<Table> Tables = new List<Table> { new Table(id: new Random().Next()) };
+        private static readonly Random Random = new Random();
+        internal static List<Table> Tables = new List<Table> { new Table((int)0xB0A12D) };
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -26,5 +27,16 @@ namespace Piecemaker.Blazor
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        public static Table GetTable(int id)
+        {
+            var table = Tables.SingleOrDefault(table => table.Id == id);
+            if (table == null)
+            {
+                table = new Table(id);
+                Tables.Add(table);
+            }
+            return table;
+        }
     }
 }

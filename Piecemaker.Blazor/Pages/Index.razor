@@ -1,5 +1,19 @@
 ﻿@page "/"
-<GameComponent ></GameComponent>
+@page "/{DesiredGameId}"
+@inject NavigationManager NavManager
+<GameComponent Table="@Table"></GameComponent>
 @code{
+    [Parameter] public string DesiredGameId { get; set; }
+    Table Table;
 
+    protected async override void OnInitialized()
+    {
+        int id = 0;
+        Int32.TryParse(DesiredGameId, System.Globalization.NumberStyles.HexNumber, null, out id);
+        if (id == 0)
+            Table = Program.Tables.First(); // TODO get first open game
+        else
+            Table = Program.GetTable(id);
+        NavManager.NavigateTo($"/{Table.Id.ToString("x")}");
+    }
 }

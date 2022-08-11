@@ -6,10 +6,9 @@ namespace ChessDotCore
 {
 	public partial class ChessGame
 	{
-		public const int StartingMana = 21;
+		public const int StartingMana = 2;
 		public const int ManaGain = 2;
-		public int WhiteMana { get; protected set; } = StartingMana;
-		public int BlackMana { get; protected set; } = StartingMana;
+		public const string StartingFen = "4k3/8/8/8/8/8/8/4K3 w - - 0 0";
 		public static PieceCosts InitialPieceCost = new PieceCosts
 		{
 			Queen = 9,
@@ -18,6 +17,9 @@ namespace ChessDotCore
 			Knight = 3,
 			Pawn = 1
 		};
+
+		public int WhiteMana { get; protected set; } = StartingMana;
+		public int BlackMana { get; protected set; } = StartingMana;
 		public PieceCosts WhitePieceCosts = InitialPieceCost;
 		public PieceCosts BlackPieceCosts = InitialPieceCost;
 		public System.Collections.ObjectModel.ReadOnlyCollection<Move> ValidMoves => GetValidMoves(WhoseTurn);

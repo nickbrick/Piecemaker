@@ -13,24 +13,20 @@
 </ul>
 <p>Piecemaker alpha @System.Environment.GetEnvironmentVariable("HEROKU_RELEASE_VERSION")</p>
 @code {
-    [Parameter]
     public Client Client { get; set; }
-    public int DesiredGameId { get; set; }
-    private Table Table;
+    [Parameter]
+    public Table Table { get; set; }
     private string[] Status => GetStatusString();
     private string SimpleFen => Table.Game.GetFen().Split()[0];
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
     public GameComponent()
     {
-        // TODO get game by desired ID
-        Table = Program.Tables.First();
-        Table.ValidMoveWasMade += Table_ValidMoveWasMade;
-        Client = Table.Join();
-
     }
     protected async override void OnInitialized()
     {
+        Table.ValidMoveWasMade += Table_ValidMoveWasMade;
+        Client = Table.Join();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

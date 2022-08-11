@@ -18,7 +18,7 @@ namespace Piecemaker.Engine
         {
             Id = id;
             Clients = new List<Client>();
-            Game = new ChessGame("4k3/P7/8/8/8/8/p7/4K3 w - - 0 0");
+            Game = new ChessGame(ChessGame.StartingFen);
         }
         private void WhiteClient_ValidMoveWasMade(object sender, MoveEventArgs e)
         {
