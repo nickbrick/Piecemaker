@@ -733,6 +733,7 @@ namespace ChessDotCore
             {
                 type |= MoveType.Capture;
                 i_halfMoveClock = 0;
+                AddMana(WhoseTurn, GetCost(Player.None, capturedPiece)); // [Piecemaker] refund mana
                 if (move.NewPosition.File == File.A && move.NewPosition.Rank == 1)
                     CanWhiteCastleQueenSide = false;
                 else if (move.NewPosition.File == File.H && move.NewPosition.Rank == 1)

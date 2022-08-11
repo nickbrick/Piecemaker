@@ -8,8 +8,8 @@ namespace ChessDotCore
 	{
 		public const int StartingMana = 2;
 		public const int ManaGain = 2;
-		public const string StartingFen = "4k3/8/8/8/8/8/8/4K3 w - - 0 0";
-		public static PieceCosts InitialPieceCost = new PieceCosts
+		public const string StartingFen = "4k3/8/8/8/8/8/4q3/4K3 w - - 0 0";
+		public static PieceCosts InitialPieceCosts = new PieceCosts
 		{
 			Queen = 9,
 			Rook = 5,
@@ -20,8 +20,8 @@ namespace ChessDotCore
 
 		public int WhiteMana { get; protected set; } = StartingMana;
 		public int BlackMana { get; protected set; } = StartingMana;
-		public PieceCosts WhitePieceCosts = InitialPieceCost;
-		public PieceCosts BlackPieceCosts = InitialPieceCost;
+		public PieceCosts WhitePieceCosts = InitialPieceCosts;
+		public PieceCosts BlackPieceCosts = InitialPieceCosts;
 		public System.Collections.ObjectModel.ReadOnlyCollection<Move> ValidMoves => GetValidMoves(WhoseTurn);
 		public int GetMana(Player player)
         {
@@ -36,7 +36,8 @@ namespace ChessDotCore
         {
 			PieceCosts costs;
 			if (player == Player.White) costs = WhitePieceCosts;
-			else costs = BlackPieceCosts;
+			else if (player == Player.Black) costs = BlackPieceCosts;
+			else costs = InitialPieceCosts;
 
 			if (piece is Pieces.Queen)
 				return costs.Queen;
@@ -80,28 +81,28 @@ namespace ChessDotCore
 			if (player == Player.White)
             {
 				if (piece is Pieces.Queen)
-					WhitePieceCosts.Queen+=InitialPieceCost.Queen;
+					WhitePieceCosts.Queen+=InitialPieceCosts.Queen;
 				if (piece is Pieces.Rook)
-					WhitePieceCosts.Rook+=InitialPieceCost.Rook;
+					WhitePieceCosts.Rook+=InitialPieceCosts.Rook;
 				if (piece is Pieces.Bishop)
-					WhitePieceCosts.Bishop+=InitialPieceCost.Bishop;
+					WhitePieceCosts.Bishop+=InitialPieceCosts.Bishop;
 				if (piece is Pieces.Knight)
-					WhitePieceCosts.Knight+=InitialPieceCost.Knight;
+					WhitePieceCosts.Knight+=InitialPieceCosts.Knight;
 				if (piece is Pieces.Pawn)
-					WhitePieceCosts.Pawn+=InitialPieceCost.Pawn;
+					WhitePieceCosts.Pawn+=InitialPieceCosts.Pawn;
 			}
             else
             {
 				if (piece is Pieces.Queen)
-					BlackPieceCosts.Queen += InitialPieceCost.Queen;
+					BlackPieceCosts.Queen += InitialPieceCosts.Queen;
 				if (piece is Pieces.Rook)
-					BlackPieceCosts.Rook += InitialPieceCost.Rook;
+					BlackPieceCosts.Rook += InitialPieceCosts.Rook;
 				if (piece is Pieces.Bishop)
-					BlackPieceCosts.Bishop += InitialPieceCost.Bishop;
+					BlackPieceCosts.Bishop += InitialPieceCosts.Bishop;
 				if (piece is Pieces.Knight)
-					BlackPieceCosts.Knight += InitialPieceCost.Knight;
+					BlackPieceCosts.Knight += InitialPieceCosts.Knight;
 				if (piece is Pieces.Pawn)
-					BlackPieceCosts.Pawn += InitialPieceCost.Pawn;
+					BlackPieceCosts.Pawn += InitialPieceCosts.Pawn;
 			}
         }
 
