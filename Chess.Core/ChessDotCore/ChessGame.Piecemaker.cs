@@ -8,7 +8,7 @@ namespace ChessDotCore
 	{
 		public const int StartingMana = 2;
 		public const int ManaGain = 2;
-		public const string StartingFen = "4k3/8/8/8/8/8/4q3/4K3 w - - 0 0";
+		public const string StartingFen = "4k3/8/8/8/8/8/8/4K3 w - - 0 0";
 		public static PieceCosts InitialPieceCosts = new PieceCosts
 		{
 			Queen = 9,
