@@ -59,6 +59,8 @@
     {
         System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
         await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
+        await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
+
         await InvokeAsync(() =>
         {
             System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");

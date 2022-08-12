@@ -52,3 +52,8 @@ function setValidMoves(moves, player) {
     whoseMove = player;
     validMoves = moves;
 }
+function highlightSquares(from, to) {
+    $('.square-55d63').removeClass('highlight');
+    $('.square-' + from).addClass('highlight');
+    $('.square-' + to).addClass('highlight');
+}
