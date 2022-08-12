@@ -5,7 +5,7 @@ var dotNetObjRef;
 function registerGameComponentObject(dotNetObjRef_) {
     dotNetObjRef = dotNetObjRef_;
 }
-function init(fen, player_) {
+function init(fen, player_, lastMove) {
     player = player_;
     board = Chessboard('myBoard', {
         draggable: true,
@@ -15,6 +15,7 @@ function init(fen, player_) {
         onDragStart: onDragStart,
         orientation: player == 'b' ? 'black' : 'white'
     });
+    highlightSquares(lastMove.split('-')[0], lastMove.split('-')[1]);
 }
 function onDragStart(source, piece, position, orientation) {
     console.log(source, piece, position, orientation);

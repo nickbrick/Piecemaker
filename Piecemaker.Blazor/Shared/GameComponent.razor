@@ -18,6 +18,7 @@
     public Table Table { get; set; }
     private string[] Status => GetStatusString();
     private string SimpleFen => Table.Game.GetFen().Split()[0];
+    private string LastMove => Table.Game.Moves.LastOrDefault()?.ToString()??"";
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
     public GameComponent()
@@ -34,7 +35,7 @@
         if (firstRender)
         {
 
-            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower()[0]);
+            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower()[0], LastMove);
             await InitGameComponentInstance();
 
         }
