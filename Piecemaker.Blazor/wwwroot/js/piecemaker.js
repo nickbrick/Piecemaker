@@ -1,9 +1,12 @@
 var board;
 var player;
-function registerGameComponentObject(dotNetObjRef) {
-    window.dotNetObjRef = dotNetObjRef;
+var whoseMove;
+var dotNetObjRef;
+function registerGameComponentObject(dotNetObjRef_) {
+    dotNetObjRef = dotNetObjRef_;
 }
-function init(fen) {
+function init(fen, player_) {
+    player = player_;
     board = Chessboard('myBoard', {
         draggable: true,
         sparePieces: true,
@@ -16,7 +19,8 @@ function init(fen) {
 function onDragStart(source, piece, position, orientation) {
     console.log(source, piece, position, orientation);
     let from = translateSource(source, piece);
-    return (validMoves.filter(x => x.includes(`${from}-`)).length > 0 || player == piece[0]);
+    console.log(from);
+    return (player == whoseMove && validMoves.filter(x => x.includes(`${from}-`)).length > 0);
 }
 function onDrop(source, target, piece) {
     let from = translateSource(source, piece);
@@ -25,7 +29,7 @@ function onDrop(source, target, piece) {
     if (target != 'offboard') {
         console.log(validMoves.filter(x => x.includes(`${from}-${target}`)).length > 0);
         if (validMoves.filter(x => x.includes(`${from}-${target}`)).length > 0)
-            window.dotNetObjRef.invokeMethodAsync('MakeMove', move);
+            dotNetObjRef.invokeMethodAsync('MakeMove', move);
         else return 'snapback';
     }
 }
@@ -42,9 +46,9 @@ function setPosition(fen) {
     board.position(fen);
     return; // idk a task was cancelled
 }
-function setValidMoves(moves, player_) {
-    console.log(moves);
-    console.log(player_);
+function setValidMoves(moves, player) {
+    //console.log(moves);
+    //console.log(player);
+    whoseMove = player;
     validMoves = moves;
-    player = player_;
 }

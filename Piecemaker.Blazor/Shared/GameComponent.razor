@@ -30,11 +30,11 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JSRuntime.InvokeVoidAsync("setValidMoves", Client.ValidMoves, Client.Player.ToString().ToLower()[0]);
+        await JSRuntime.InvokeVoidAsync("setValidMoves", Client.ValidMoves, Table.Game.WhoseTurn.ToString().ToLower()[0]);
         if (firstRender)
         {
 
-            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen());
+            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower()[0]);
             await InitGameComponentInstance();
 
         }
