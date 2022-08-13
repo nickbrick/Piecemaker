@@ -31,19 +31,17 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower()[0], LastMove);
+            await InitGameComponentInstance();
+        }
         await JSRuntime.InvokeVoidAsync("setValidMoves",
             Client.ValidMoves,
             Table.Game.WhoseTurn.ToString().ToLower()[0],
-            Table.Game.WhiteSummonablePieces.Select(s => "w"+s).ToList().Concat(
-                Table.Game.BlackSummonablePieces.Select(s => "b"+s.ToUpper()).ToList())
-            );
-        if (firstRender)
-        {
-
-            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower()[0], LastMove);
-            await InitGameComponentInstance();
-
-        }
+            Table.Game.WhiteSummonablePieces.Select(s => "w" + s).ToList().Concat(
+            Table.Game.BlackSummonablePieces.Select(s => "b" + s.ToUpper()).ToList())
+        );
     }
     private async Task InitGameComponentInstance()
     {
