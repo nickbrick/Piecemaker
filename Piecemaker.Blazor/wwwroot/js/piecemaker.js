@@ -18,12 +18,16 @@ function init(fen, player_, lastMove) {
     highlightSquares(lastMove.split('-')[0], lastMove.split('-')[1]);
 }
 function onDragStart(source, piece, position, orientation) {
-    console.log(source, piece, position, orientation);
     let from = translateSource(source, piece);
-    console.log(from);
-    return (player == whoseMove && validMoves.filter(x => x.includes(`${from}-`)).length > 0);
+    let theseMoves = validMoves.filter(x => x.includes(`${from}-`));
+    let destinations = theseMoves.map(x => x.split('-')[1]);
+    destinations.forEach(x => 
+        $('.square-' + x).addClass('destination')
+    );
+    return (player == whoseMove && theseMoves.length > 0);
 }
 function onDrop(source, target, piece) {
+    $('.square-55d63').removeClass('destination');
     let from = translateSource(source, piece);
     let move = `${from} ${target}`;
     console.log(move);

@@ -9,3 +9,7 @@
 .locked{
     opacity: 0.5;
 }
+
+.destination {
+    background-image: radial-gradient(#d1ae89 25%, transparent 28%);
+}
