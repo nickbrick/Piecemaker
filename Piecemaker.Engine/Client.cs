@@ -30,7 +30,6 @@ namespace Piecemaker.Engine
             }
             catch
             {
-                throw;
                 return false;
             }
         }
