@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace ChessDotCore
 {
@@ -22,6 +23,8 @@ namespace ChessDotCore
 		public int BlackMana { get; protected set; } = StartingMana;
 		public PieceCosts WhitePieceCosts = InitialPieceCosts;
 		public PieceCosts BlackPieceCosts = InitialPieceCosts;
+		public List<string> WhiteSummonablePieces => GetSummonablePieces(Player.White);
+		public List<string> BlackSummonablePieces => GetSummonablePieces(Player.Black);
 		public System.Collections.ObjectModel.ReadOnlyCollection<Move> ValidMoves => GetValidMoves(WhoseTurn);
 		public int GetMana(Player player)
         {
@@ -154,6 +157,16 @@ namespace ChessDotCore
 			Piece summon = move.OriginalPosition.Summon;
 
 			return IsPlayersKingAdjacentTo(move.Player, pos) && CanAffordSummon(summon);
+        }
+		private List<string> GetSummonablePieces(Player player)
+        {
+			var pieces = new List<Piece> {
+				new Pieces.Queen(player),
+				new Pieces.Rook(player),
+				new Pieces.Bishop(player),
+				new Pieces.Knight(player),
+				new Pieces.Pawn(player) };
+			return pieces.Where(piece => CanAffordSummon(piece)).Select(piece => piece.ToString()).ToList();
         }
 	}
 }

@@ -31,7 +31,12 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JSRuntime.InvokeVoidAsync("setValidMoves", Client.ValidMoves, Table.Game.WhoseTurn.ToString().ToLower()[0]);
+        await JSRuntime.InvokeVoidAsync("setValidMoves",
+            Client.ValidMoves,
+            Table.Game.WhoseTurn.ToString().ToLower()[0],
+            Table.Game.WhiteSummonablePieces.Select(s => "w"+s).ToList().Concat(
+                Table.Game.BlackSummonablePieces.Select(s => "b"+s.ToUpper()).ToList())
+            );
         if (firstRender)
         {
 
@@ -73,7 +78,7 @@
         return new string[] {
             $"You are {Client.Id} ({Client.Player})",
             $"Opponent: {Client.GetOpponentClient()?.Id.ToString() ?? "none"}",
-            $"{Table.Game.WhoseTurn} to play",
+            $"{Table.Game.WhoseTurn} to move",
             $"♔: {Table.Game.GetMana(Player.White)} | ♕: {Table.Game.GetCost<Queen>(Player.White)} | ♖: {Table.Game.GetCost<Rook>(Player.White)} | ♗: {Table.Game.GetCost<Bishop>(Player.White)} | ♘: {Table.Game.GetCost<Knight>(Player.White)} | ♙: {Table.Game.GetCost<Pawn>(Player.White)}",
             $"♚: {Table.Game.GetMana(Player.Black)} | ♛: {Table.Game.GetCost<Queen>(Player.Black)} | ♜: {Table.Game.GetCost<Rook>(Player.Black)} | ♝: {Table.Game.GetCost<Bishop>(Player.Black)} | ♞: {Table.Game.GetCost<Knight>(Player.Black)} | ♟: {Table.Game.GetCost<Pawn>(Player.Black)}"
         };

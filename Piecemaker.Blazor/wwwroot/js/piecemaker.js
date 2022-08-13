@@ -47,11 +47,13 @@ function setPosition(fen) {
     board.position(fen);
     return; // idk a task was cancelled
 }
-function setValidMoves(moves, player) {
-    //console.log(moves);
-    //console.log(player);
+function setValidMoves(moves, player, summonables) {
     whoseMove = player;
     validMoves = moves;
+    $('.spare-pieces-7492f img').addClass('locked');
+    summonables.forEach(x => {
+        $(`.spare-pieces-7492f img[data-piece="${x}"]`).removeClass('locked');
+    });
 }
 function highlightSquares(from, to) {
     $('.square-55d63').removeClass('highlight');

@@ -55,6 +55,10 @@ namespace ChessDotCore
             return !piece1.Equals(piece2);
         }
 
+        public override string ToString()
+        {
+            return GetFenCharacter().ToString();
+        }
         public abstract char GetFenCharacter();
         public abstract string GetUnicodeGlyph();
         public abstract bool IsValidMove(Move move, ChessGame game);
