@@ -65,11 +65,9 @@
         await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
         await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
 
-        await InvokeAsync(() =>
-        {
-            System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
-            StateHasChanged();
-        });
+        System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
+        await InvokeAsync(StateHasChanged);
+
     }
     private string[] GetStatusString()
     {
