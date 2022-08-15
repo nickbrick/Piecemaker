@@ -157,7 +157,7 @@ namespace ChessDotCore
 			if (!move.IsSummon) return false;
 			Piece summon = move.OriginalPosition.Summon;
 
-			return IsPlayersKingAdjacentTo(move.Player, pos) && CanAffordSummon(summon);
+			return IsPlayersKingAdjacentTo(move.Player, pos) && CanAffordSummon(summon) && !WouldBeInCheckAfter(move, WhoseTurn);
         }
 		private List<string> GetSummonablePieces(Player player)
         {
