@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessDotCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,12 +12,22 @@ namespace Piecemaker.Engine
         public string NewPositionSimpleFen { get; set; }
         public string From { get; set; }
         public string To { get; set; }
-        public MoveEventArgs(ChessDotCore.ChessGame game)
+        public MoveType Type { get; set; }
+        public Player Player { get; set; }
+        public MoveEventArgs(ChessGame game)
         {
+            var move = game.Moves.Last();
             NewPositionFen = game.GetFen();
             NewPositionSimpleFen = game.GetFen().Split()[0];
-            From = game.Moves.Last().OriginalPosition.ToString();
-            To = game.Moves.Last().NewPosition.ToString();
+            From = move.OriginalPosition.ToString();
+            To = move.NewPosition.ToString();
+            Player = move.Player;
+
+            MoveType moveType = MoveType.Move;
+            if (game.IsInCheck(~Player)) moveType |= MoveType.Check;
+            if (move.IsSummon) moveType |= MoveType.Summon;
+            if (move.IsCapture) moveType |= MoveType.Capture;
+            Type = moveType;
         }
     }
 }

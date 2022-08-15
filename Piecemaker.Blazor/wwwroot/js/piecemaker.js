@@ -64,3 +64,6 @@ function highlightSquares(from, to) {
     $('.square-' + from).addClass('highlight');
     $('.square-' + to).addClass('highlight');
 }
+function playSound(soundName) {
+    $(`#${soundName}`)[0].play();
+}

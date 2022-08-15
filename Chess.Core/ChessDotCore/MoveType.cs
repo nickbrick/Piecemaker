@@ -9,6 +9,7 @@
         Castling = 8,
         Promotion = 16,
         EnPassant = 32,
-        Summon = 64
+        Summon = 64,
+        Check = 128
     }
 }

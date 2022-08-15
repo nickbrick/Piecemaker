@@ -4,6 +4,11 @@
 @using ChessDotCore;
 <h3>Table @Table.Id.ToString("x")</h3>
 <div id="myBoard" style="width: 400px"></div>
+<audio id="audio-check" style="display:none;" src="/webm/move-check.webm"></audio>
+<audio id="audio-capture" style="display:none;" src="/webm/capture.webm"></audio>
+<audio id="audio-promote" style="display:none;" src="/webm/promote.webm"></audio>
+<audio id="audio-move-opponent" style="display:none;" src="/webm/move-opponent.webm"></audio>
+<audio id="audio-move-self" style="display:none;" src="/webm/move-self.webm"></audio>
 <ul>
     @foreach (var line in Status)
     {
@@ -18,7 +23,8 @@
     public Table Table { get; set; }
     private string[] Status => GetStatusString();
     private string SimpleFen => Table.Game.GetFen().Split()[0];
-    private string LastMove => Table.Game.Moves.LastOrDefault()?.ToString()??"";
+    private string LastMove => Table.Game.Moves.LastOrDefault()?.ToString() ?? "";
+    private Player Winner => Table.Game.IsCheckmated(Player.White) ? Player.Black : Table.Game.IsCheckmated(Player.Black) ? Player.White : Player.None;
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
     public GameComponent()
@@ -64,17 +70,25 @@
         System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
         await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
         await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
+        await JSRuntime.InvokeVoidAsync("playSound", GetSoundName(e));
 
         System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
         await InvokeAsync(StateHasChanged);
-
+    }
+    private string GetSoundName(MoveEventArgs e)
+    {
+        if (e.Type.HasFlag(MoveType.Check)) return "audio-check";
+        if (e.Type.HasFlag(MoveType.Capture)) return "audio-capture";
+        if (e.Type.HasFlag(MoveType.Summon)) return "audio-promote";
+        if (e.Player != Client.Player) return "audio-move-opponent";
+        return "audio-move-self";
     }
     private string[] GetStatusString()
     {
         return new string[] {
             $"You are {Client.Id} ({Client.Player})",
             $"Opponent: {Client.GetOpponentClient()?.Id.ToString() ?? "none"}",
-            $"{Table.Game.WhoseTurn} to move",
+            Winner != Player.None ? $"{Winner} wins" : $"{Table.Game.WhoseTurn} to move",
             $"♔: {Table.Game.GetMana(Player.White)} | ♕: {Table.Game.GetCost<Queen>(Player.White)} | ♖: {Table.Game.GetCost<Rook>(Player.White)} | ♗: {Table.Game.GetCost<Bishop>(Player.White)} | ♘: {Table.Game.GetCost<Knight>(Player.White)} | ♙: {Table.Game.GetCost<Pawn>(Player.White)}",
             $"♚: {Table.Game.GetMana(Player.Black)} | ♛: {Table.Game.GetCost<Queen>(Player.Black)} | ♜: {Table.Game.GetCost<Rook>(Player.Black)} | ♝: {Table.Game.GetCost<Bishop>(Player.Black)} | ♞: {Table.Game.GetCost<Knight>(Player.Black)} | ♟: {Table.Game.GetCost<Pawn>(Player.Black)}"
         };
