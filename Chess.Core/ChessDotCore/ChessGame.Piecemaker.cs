@@ -54,7 +54,7 @@ namespace ChessDotCore
 			if (piece is Pieces.Pawn)
 				return costs.Pawn;
 
-			throw new ArgumentException("Invalid piece.");
+			throw new ArgumentException($"Invalid piece '{piece.GetType().Name}'");
 		}
 		public int GetCost<T>(Player player) where T : Piece
 		{
@@ -73,7 +73,7 @@ namespace ChessDotCore
 			if (typeof(T) == typeof(Pieces.Pawn))
 				return costs.Pawn;
 
-			throw new ArgumentException("Invalid piece.");
+			throw new ArgumentException($"Invalid piece '{typeof(T)}'");
 		}
 		public object[] GetAllCosts(Player player)
         {
@@ -156,8 +156,10 @@ namespace ChessDotCore
 			Position pos = move.NewPosition;
 			if (!move.IsSummon) return false;
 			Piece summon = move.OriginalPosition.Summon;
-
-			return IsPlayersKingAdjacentTo(move.Player, pos) && CanAffordSummon(summon) && !WouldBeInCheckAfter(move, WhoseTurn);
+			if (!CanAffordSummon(summon)) return false;
+			if (!IsPlayersKingAdjacentTo(move.Player, pos)) return false;
+			if (WouldBeInCheckAfter(move, WhoseTurn)) return false;
+			return true;
         }
 		private List<string> GetSummonablePieces(Player player)
         {

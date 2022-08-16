@@ -677,24 +677,25 @@ namespace ChessDotCore
             Piece newPiece = movingPiece;
             bool isCapture = capturedPiece != null;
             var castle = CastlingType.None;
-            if (movingPiece is Pawn)
-            {
-                i_halfMoveClock = 0;
-                var pd = new PositionDistance(move.OriginalPosition, move.NewPosition);
-                if (pd.DistanceX == 1 && pd.DistanceY == 1 && GetPieceAt(move.NewPosition) == null)
-                {
-                    type |= MoveType.EnPassant;
-                    isCapture = true;
-                    captured = GetPieceAt(move.NewPosition.File, move.OriginalPosition.Rank);
-                    SetPieceAt(move.NewPosition.File, move.OriginalPosition.Rank, null);
-                }
-                //if (move.NewPosition.Rank == (move.Player == Player.White ? 8 : 1))
-                //{
-                //    newPiece = MapPgnCharToPiece(move.Promotion.Value, move.Player).AsPromotion();
-                //    type |= MoveType.Promotion;
-                //}
-            }
-            else if (movingPiece is King)
+            // [Piecemaker] no en passant no promotion
+            //if (movingPiece is Pawn)
+            //{
+            //    i_halfMoveClock = 0;
+            //    var pd = new PositionDistance(move.OriginalPosition, move.NewPosition);
+            //    if (pd.DistanceX == 1 && pd.DistanceY == 1 && GetPieceAt(move.NewPosition) == null)
+            //    {
+            //        type |= MoveType.EnPassant;
+            //        isCapture = true;
+            //        captured = GetPieceAt(move.NewPosition.File, move.OriginalPosition.Rank);
+            //        SetPieceAt(move.NewPosition.File, move.OriginalPosition.Rank, null);
+            //    }
+            //    //if (move.NewPosition.Rank == (move.Player == Player.White ? 8 : 1))
+            //    //{
+            //    //    newPiece = MapPgnCharToPiece(move.Promotion.Value, move.Player).AsPromotion();
+            //    //    type |= MoveType.Promotion;
+            //    //}
+            //}
+            if (movingPiece is King)
             {
                 if (movingPiece.Owner == Player.White)
                     CanWhiteCastleKingSide = CanWhiteCastleQueenSide = false;
