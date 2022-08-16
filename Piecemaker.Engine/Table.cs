@@ -7,6 +7,7 @@ namespace Piecemaker.Engine
     public class Table
     {
         public event EventHandler<MoveEventArgs> ValidMoveWasMade;
+        public event EventHandler<Player> PlayerWonByCheckmate;
         public event EventHandler<Client> ClientJoined;
         public event EventHandler<Client> ClientDisconnected;
         public int Id { get; }
@@ -22,11 +23,17 @@ namespace Piecemaker.Engine
         }
         private void WhiteClient_ValidMoveWasMade(object sender, MoveEventArgs e)
         {
-            ValidMoveWasMade?.Invoke(this, e);
+            AnyClient_ValidMoveWasMade(this, e);
         }
         private void BlackClient_ValidMoveWasMade(object sender, MoveEventArgs e)
         {
+            AnyClient_ValidMoveWasMade(this, e);
+        }
+        private void AnyClient_ValidMoveWasMade(object sender, MoveEventArgs e)
+        {
             ValidMoveWasMade?.Invoke(this, e);
+            if (Game.IsCheckmated(Game.WhoseTurn))
+                PlayerWonByCheckmate?.Invoke(this, e.Player);
         }
         public Client Join()
         {
