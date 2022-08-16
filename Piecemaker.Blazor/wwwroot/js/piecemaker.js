@@ -61,8 +61,10 @@ function setValidMoves(moves, player, summonables) {
 }
 function highlightSquares(from, to) {
     $('.square-55d63').removeClass('highlight');
-    $('.square-' + from).addClass('highlight');
-    $('.square-' + to).addClass('highlight');
+    $('.square-55d63').removeClass('capture');
+    $(`.square-${from}`).addClass('highlight');
+    $(`.square-${to}`).addClass('highlight');
+    $(`.square-${to}:has(img)`).addClass('capture');
 }
 function playSound(soundName) {
     $(`#${soundName}`)[0].play();

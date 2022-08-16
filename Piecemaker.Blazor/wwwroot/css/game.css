@@ -13,3 +13,7 @@
 .destination {
     background-image: radial-gradient(#d1ae89 25%, transparent 28%);
 }
+
+.destination.capture {
+    background-image: radial-gradient(transparent 0%, transparent 50%, #d1ae89 53%,#d1ae89 68%, transparent 71%);
+}
