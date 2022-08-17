@@ -50,12 +50,13 @@ namespace Piecemaker.Engine
             }
             else client.Player = Player.None;
             Clients.Add(client);
+            ClientJoined?.Invoke(this, client);
             return client;
         }
         public void Disconnect(Client client)
         {
-            ClientDisconnected?.Invoke(this, client);
             Clients.Remove(client);
+            ClientDisconnected?.Invoke(this, client);
         }
     }
 }

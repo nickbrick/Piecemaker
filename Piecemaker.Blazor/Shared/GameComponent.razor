@@ -33,6 +33,8 @@
     protected async override void OnInitialized()
     {
         Table.ValidMoveWasMade += Table_ValidMoveWasMade;
+        Table.ClientJoined += Table_ClientJoined;
+        Table.ClientDisconnected += Table_ClientDisconnected;
         Client = Table.Join();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -62,7 +64,7 @@
         {
             await JSRuntime.InvokeVoidAsync("setPosition", SimpleFen);
         }
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
         return result;
     }
     private async void Table_ValidMoveWasMade(object sender, MoveEventArgs e)
@@ -82,6 +84,15 @@
         if (e.Type.HasFlag(MoveType.Summon)) return "audio-promote";
         if (e.Player != Client.Player) return "audio-move-opponent";
         return "audio-move-self";
+    }
+    private async void Table_ClientJoined(object sender, Client e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    private async void Table_ClientDisconnected(object sender, Client e)
+    {
+        if (Client != e)
+            await InvokeAsync(StateHasChanged);
     }
     private string[] GetStatusString()
     {
