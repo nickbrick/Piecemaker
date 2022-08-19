@@ -27,6 +27,9 @@ namespace Piecemaker.Blazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddSignalR(e => {
+                e.ClientTimeoutInterval = new TimeSpan(1, 0, 0); // Task was canceled crash
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

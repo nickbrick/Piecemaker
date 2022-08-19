@@ -49,7 +49,6 @@ function translateSource(source, piece) {
 }
 function setPosition(fen) {
     board.position(fen);
-    return; // idk a task was cancelled
 }
 function setValidMoves(moves, player, summonables) {
     whoseMove = player;
