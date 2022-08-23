@@ -21,13 +21,15 @@ function onDragStart(source, piece, position, orientation) {
     let from = translateSource(source, piece);
     let theseMoves = validMoves.filter(x => x.includes(`${from}-`));
     let destinations = theseMoves.map(x => x.split('-')[1]);
-    destinations.forEach(x => 
-        $('.square-' + x).addClass('destination')
-    );
+    destinations.forEach(x => {
+        $(`.square-${x}`).addClass('destination');
+        $(`.square-${x}:has(img)`).addClass('capture');
+    });
     return (player == whoseMove && theseMoves.length > 0);
 }
 function onDrop(source, target, piece) {
     $('.square-55d63').removeClass('destination');
+    $('.square-55d63').removeClass('capture');
     let from = translateSource(source, piece);
     let move = `${from} ${target}`;
     console.log(move);
@@ -60,10 +62,8 @@ function setValidMoves(moves, player, summonables) {
 }
 function highlightSquares(from, to) {
     $('.square-55d63').removeClass('highlight');
-    $('.square-55d63').removeClass('capture');
     $(`.square-${from}`).addClass('highlight');
     $(`.square-${to}`).addClass('highlight');
-    $(`.square-${to}:has(img)`).addClass('capture');
 }
 function playSound(soundName) {
     $(`#${soundName}`)[0].play();
