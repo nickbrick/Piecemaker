@@ -19,6 +19,7 @@ namespace ChessDotCore
 			Knight = 3,
 			Pawn = 1
 		};
+		public const bool AllowCheck = false;
 
 		public int WhiteMana { get; protected set; } = StartingMana;
 		public int BlackMana { get; protected set; } = StartingMana;

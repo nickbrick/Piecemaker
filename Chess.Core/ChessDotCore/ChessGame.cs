@@ -561,7 +561,7 @@ namespace ChessDotCore
             {
                 return false;
             }
-            if (!piece.IsValidMove(move, this) && !move.IsSummon) // Summon validation happens outside of Piece subclasses
+            if (!piece.IsValidMove(move, this) && !move.IsSummon) // [Piecemaker] Summon validation happens outside of Piece subclasses
             {
                 return false;
             }
@@ -572,7 +572,6 @@ namespace ChessDotCore
                     return false;
                 }
             }
-
             return true;
         }
 
@@ -1075,6 +1074,10 @@ namespace ChessDotCore
                         }
                     }
                 }
+            }
+            if (!AllowCheck) // [Piecemaker]
+            {
+                validMoves.RemoveAll(move => WouldBeInCheckAfter(move, ~move.Player));
             }
             return new ReadOnlyCollection<Move>(validMoves);
         }
