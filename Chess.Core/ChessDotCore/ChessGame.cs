@@ -533,7 +533,7 @@ namespace ChessDotCore
             ChessUtilities.ThrowIfNull(move, nameof(move));
             return IsValidMove(move, validateCheck, true);
         }
-        
+
         protected virtual bool IsValidMove(Move move, bool validateCheck, bool careAboutWhoseTurnItIs)
         {
             ChessUtilities.ThrowIfNull(move, nameof(move));
@@ -1037,6 +1037,7 @@ namespace ChessDotCore
 
         protected virtual ReadOnlyCollection<Move> GetValidMoves(Position from, bool returnIfAny)
         {
+            returnIfAny = false; // [Piecemaker]
             ChessUtilities.ThrowIfNull(from, nameof(from));
             Piece piece = GetPieceAt(from);
             if (piece == null || piece.Owner != WhoseTurn) return new ReadOnlyCollection<Move>(new List<Move>());
@@ -1050,6 +1051,7 @@ namespace ChessDotCore
 
         protected virtual ReadOnlyCollection<Move> GetValidMoves(Player player, bool returnIfAny)
         {
+            returnIfAny = false; // [Piecemaker]
             if (player != WhoseTurn) return new ReadOnlyCollection<Move>(new List<Move>());
             var validMoves = new List<Move>();
             for (int r = 1; r <= Board.Length; r++)
@@ -1062,22 +1064,18 @@ namespace ChessDotCore
                     if (p == null)
                     {
                         var pieces = new List<Piece> { new Queen(player), new Rook(player), new Bishop(player), new Knight(player), new Pawn(player) };
-                        var moves = pieces.Select(p=> new Move(new Position(p.GetFenCharacter().ToString()), pos, player));
+                        var moves = pieces.Select(p => new Move(new Position(p.GetFenCharacter().ToString()), pos, player));
                         validMoves.AddRange(moves.Where(move => IsSummonValid(move)));
                     }
                     if (p != null && p.Owner == player)
                     {
                         validMoves.AddRange(GetValidMoves(pos, returnIfAny));
-                        if (returnIfAny && validMoves.Count > 0)
-                        {
-                            return new ReadOnlyCollection<Move>(validMoves);
-                        }
                     }
                 }
             }
             if (!AllowCheck) // [Piecemaker]
             {
-                validMoves.RemoveAll(move => WouldBeInCheckAfter(move, ~move.Player));
+                validMoves.RemoveAll(move => WouldBeInCheckAfter(move, ~move.Player) && !WouldCheckmate(move));
             }
             return new ReadOnlyCollection<Move>(validMoves);
         }
@@ -1231,6 +1229,12 @@ namespace ChessDotCore
 
         public virtual bool WouldBeInCheckAfter(Move move, Player player)
         {
+            ChessGame copy = CloneGameAndApplyMove(move);
+            return copy.IsInCheck(player);
+        }
+
+        private ChessGame CloneGameAndApplyMove(Move move)
+        {
             ChessUtilities.ThrowIfNull(move, nameof(move));
             var gcd = new GameCreationData();
             gcd.Board = Board;
@@ -1253,7 +1257,12 @@ namespace ChessDotCore
                     copy.SetPieceAt(move.OriginalPosition.File, move.OriginalPosition.Rank, null);
                 copy.SetPieceAt(move.NewPosition.File, move.NewPosition.Rank, p);
             }
-            return copy.IsInCheck(player);
+            copy.WhoseTurn = ~move.Player;
+            copy.WhiteMana = WhiteMana;
+            copy.BlackMana = BlackMana;
+            copy.WhitePieceCosts = WhitePieceCosts;
+            copy.BlackPieceCosts = BlackPieceCosts;
+            return copy;
         }
 
         public void ClaimDraw(string reason)

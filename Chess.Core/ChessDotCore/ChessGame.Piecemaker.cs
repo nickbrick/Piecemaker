@@ -10,7 +10,7 @@ namespace ChessDotCore
 		public const int StartingMana = 2;
 		public const int ManaGain = 2;
 		public const string StartingFen = "4k3/8/8/8/8/8/8/4K3 w - - 0 0";
-		public const string CheckmateFenTest = "8/1R6/8/8/k1K5/8/8/8 w - - 0 0";
+		public const string CheckmateFenTest = "8/1Q6/8/8/k1K5/8/8/8 b - - 0 0";
 		public static PieceCosts InitialPieceCosts = new PieceCosts
 		{
 			Queen = 9,
@@ -172,5 +172,10 @@ namespace ChessDotCore
 				new Pieces.Pawn(player) };
 			return pieces.Where(piece => CanAffordSummon(piece)).Select(piece => piece.ToString()).ToList();
         }
+		public virtual bool WouldCheckmate(Move move)
+        {
+			ChessGame copy = CloneGameAndApplyMove(move);
+			return !copy.HasAnyValidMoves(~move.Player);
+		}
 	}
 }
