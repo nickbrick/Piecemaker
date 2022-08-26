@@ -894,7 +894,7 @@
       }
 
         var html = ''
-        // [Piecemaker] mana
+        // [Piecemaker] mana pools
         html += `<div style="width:${squareSize}px;height:${squareSize}px;">`;
         html += `<img style="width:${squareSize}px;height:${squareSize}px;" src="img/mana-${color}.png" draggable="false"></img>`;
         html += `<div class="mana-pool mana-pool-${color}">`;

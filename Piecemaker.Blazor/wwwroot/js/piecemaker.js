@@ -55,8 +55,9 @@ function setPosition(fen) {
 function setValidMoves(moves, player, summonables) {
     whoseMove = player;
     validMoves = moves;
-    $('.spare-pieces-7492f img').addClass('locked');
+    $('.spare-pieces-7492f img[data-piece]').addClass('locked');
     $(`.spare-pieces-7492f .piece-cost span`).addClass('locked');
+
     summonables.forEach(x => {
         $(`.spare-pieces-7492f img[data-piece="${x}"]`).removeClass('locked');
         $(`.spare-pieces-7492f .piece-cost-${x}`).removeClass('locked');
