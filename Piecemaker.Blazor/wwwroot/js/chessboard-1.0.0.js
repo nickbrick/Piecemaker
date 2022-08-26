@@ -888,14 +888,27 @@
     }
 
     function buildSparePiecesHTML (color) {
-        var pieces = [/*'wK',*/ 'wQ', 'wR', 'wB', 'wN', 'wP']  // no kings
+        var pieces = [/*'wK',*/ 'wQ', 'wR', 'wB', 'wN', 'wP']  // [Piecemaker] no kings
       if (color === 'black') {
         pieces = [/*'bK',*/ 'bQ', 'bR', 'bB', 'bN', 'bP']
       }
 
-      var html = ''
-      for (var i = 0; i < pieces.length; i++) {
-        html += buildPieceHTML(pieces[i], false, sparePiecesElsIds[pieces[i]])
+        var html = ''
+        // [Piecemaker] mana
+        html += `<div style="width:${squareSize}px;height:${squareSize}px;">`;
+        html += `<img style="width:${squareSize}px;height:${squareSize}px;" src="img/mana-${color}.png" draggable="false"></img>`;
+        html += `<div class="mana-pool mana-pool-${color}">`;
+        html += `<span class="mana-${color}"></span>`;
+        html += '</div>';
+        html += '</div>';
+
+        for (var i = 0; i < pieces.length; i++) {
+            html += `<div style="width:${squareSize}px;height:${squareSize}px;">`; // [Piecemaker] piece costs
+            html += buildPieceHTML(pieces[i], false, sparePiecesElsIds[pieces[i]])
+            html += `<div class="piece-cost piece-cost-${color}">`;
+            html += `<span class="piece-cost-${pieces[i]}"></span>`;
+            html += '</div>';
+            html += '</div>';
       }
 
       return html

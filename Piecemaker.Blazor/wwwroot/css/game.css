@@ -6,14 +6,82 @@
     box-shadow: inset 0 0 3px 3px #ff08 !important;
 }
 
-.locked{
+.locked {
     opacity: 0.5;
 }
+
+span {
+    user-select: none;
+}
+
+    span.locked {
+        opacity: 0.9;
+    }
 
 .destination {
     background-image: radial-gradient(#d1ae89 25%, transparent 28%);
 }
 
-.destination.capture {
-    background-image: radial-gradient(transparent 0%, transparent 50%, #d1ae89 53%,#d1ae89 68%, transparent 71%);
+    .destination.capture {
+        background-image: radial-gradient(transparent 0%, transparent 50%, #d1ae89 53%,#d1ae89 68%, transparent 71%);
+    }
+
+.spare-pieces-7492f {
+    display: inline-flex;
 }
+
+.piece-cost {
+    text-align: center;
+    top: -22px;
+    left: 30px;
+    width: 21px;
+    height: 21px;
+    position: relative;
+    border-radius: 11px;
+    border: 2px solid;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+    .piece-cost.piece-cost-white {
+        color: black;
+        background-color: white;
+        border-color: black;
+    }
+
+    .piece-cost.piece-cost-black {
+        color: white;
+        background-color: black;
+        border-color: white;
+    }
+
+.mana-pool {
+    text-align: center;
+    top: -22px;
+    left: 30px;
+    width: 21px;
+    height: 21px;
+    position: relative;
+    border-radius: 11px;
+    border: 2px solid;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+    .mana-pool.mana-pool-white {
+        color: black;
+        background-color: white;
+        border-color: black;
+    }
+
+    .mana-pool.mana-pool-black {
+        color: white;
+        background-color: black;
+        border-color: white;
+    }

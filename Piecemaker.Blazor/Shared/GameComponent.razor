@@ -50,6 +50,8 @@
             Table.Game.WhiteSummonablePieces.Select(s => "w" + s).ToList().Concat(
             Table.Game.BlackSummonablePieces.Select(s => "b" + s.ToUpper()).ToList())
         );
+        await JSRuntime.InvokeVoidAsync("updateMana", GetGameManasAndCosts());
+
     }
     private async Task InitGameComponentInstance()
     {
@@ -79,11 +81,30 @@
     }
     private string GetSoundName(MoveEventArgs e)
     {
-        if (e.Type.HasFlag(MoveType.Check)) return "audio-check";
-        if (e.Type.HasFlag(MoveType.Capture)) return "audio-capture";
-        if (e.Type.HasFlag(MoveType.Summon)) return "audio-promote";
-        if (e.Player != Client.Player) return "audio-move-opponent";
-        return "audio-move-self";
+        if (e.Type.HasFlag(MoveType.Check)) return "#audio-check";
+        if (e.Type.HasFlag(MoveType.Capture)) return "#audio-capture";
+        if (e.Type.HasFlag(MoveType.Summon)) return "#audio-promote";
+        if (e.Player != Client.Player) return "#audio-move-opponent";
+        return "#audio-move-self";
+    }
+    private Dictionary<string, int> GetGameManasAndCosts()
+    {
+        return new Dictionary<string, int>
+    {
+            {".piece-cost-wP", Table.Game.WhitePieceCosts.Pawn},
+            {".piece-cost-wN", Table.Game.WhitePieceCosts.Knight},
+            {".piece-cost-wB", Table.Game.WhitePieceCosts.Bishop},
+            {".piece-cost-wR", Table.Game.WhitePieceCosts.Rook},
+            {".piece-cost-wQ", Table.Game.WhitePieceCosts.Queen},
+            {".mana-white", Table.Game.WhiteMana},
+
+            {".piece-cost-bP", Table.Game.BlackPieceCosts.Pawn},
+            {".piece-cost-bN", Table.Game.BlackPieceCosts.Knight},
+            {".piece-cost-bB", Table.Game.BlackPieceCosts.Bishop},
+            {".piece-cost-bR", Table.Game.BlackPieceCosts.Rook},
+            {".piece-cost-bQ", Table.Game.BlackPieceCosts.Queen},
+            {".mana-black", Table.Game.BlackMana}
+        };
     }
     private async void Table_ClientJoined(object sender, Client e)
     {

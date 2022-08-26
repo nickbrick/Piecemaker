@@ -56,8 +56,10 @@ function setValidMoves(moves, player, summonables) {
     whoseMove = player;
     validMoves = moves;
     $('.spare-pieces-7492f img').addClass('locked');
+    $(`.spare-pieces-7492f .piece-cost span`).addClass('locked');
     summonables.forEach(x => {
         $(`.spare-pieces-7492f img[data-piece="${x}"]`).removeClass('locked');
+        $(`.spare-pieces-7492f .piece-cost-${x}`).removeClass('locked');
     });
 }
 function highlightSquares(from, to) {
@@ -66,5 +68,10 @@ function highlightSquares(from, to) {
     $(`.square-${to}`).addClass('highlight');
 }
 function playSound(soundName) {
-    $(`#${soundName}`)[0].play();
+    $(soundName)[0].play();
+}
+function updateMana(kvs) {
+    Object.keys(kvs).forEach(key => {
+        $(key).text(kvs[key]);
+    });
 }
