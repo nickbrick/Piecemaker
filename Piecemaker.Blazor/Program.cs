@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Piecemaker.Engine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +13,7 @@ namespace Piecemaker.Blazor
 {
     public class Program
     {
-        private static readonly Random Random = new Random();
-        internal static List<Table> Tables = new List<Table> { new Table((int)0xB0A12D) };
+        internal static readonly Piecemaker.Engine.Program Piecemaker = new Piecemaker.Engine.Program();
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -27,16 +25,5 @@ namespace Piecemaker.Blazor
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
-        public static Table GetTable(int id)
-        {
-            var table = Tables.SingleOrDefault(table => table.Id == id);
-            if (table == null)
-            {
-                table = new Table(id);
-                Tables.Add(table);
-            }
-            return table;
-        }
     }
 }

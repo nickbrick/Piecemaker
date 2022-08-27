@@ -2,7 +2,7 @@
 @inject IJSRuntime JsRuntime
 @using ChessDotCore.Pieces;
 @using ChessDotCore;
-<h3>Table @Table.Id.ToString("x")</h3>
+<h3>Table @Table.Id.ToString("x"): @Table.Status</h3>
 <div id="myBoard" style="width: 400px"></div>
 <audio id="audio-check" style="display:none;" src="/webm/move-check.webm"></audio>
 <audio id="audio-capture" style="display:none;" src="/webm/capture.webm"></audio>
@@ -18,6 +18,7 @@
 </ul>
 <p>Piecemaker alpha @System.Environment.GetEnvironmentVariable("HEROKU_RELEASE_VERSION")</p>
 @code {
+    public Engine.Program PiecemakerGame => Blazor.Program.Piecemaker;
     public Client Client { get; set; }
     [Parameter]
     public Table Table { get; set; }
@@ -71,13 +72,18 @@
     }
     private async void Table_ValidMoveWasMade(object sender, MoveEventArgs e)
     {
-        System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
-        await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
-        await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
-        await JSRuntime.InvokeVoidAsync("playSound", GetSoundName(e));
+        try
+        {
+            System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
+            await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
+            await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
+            await JSRuntime.InvokeVoidAsync("playSound", GetSoundName(e));
 
-        System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
-        await InvokeAsync(StateHasChanged);
+            System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
+            await InvokeAsync(StateHasChanged);
+        }
+        catch
+        { }
     }
     private string GetSoundName(MoveEventArgs e)
     {
@@ -122,7 +128,14 @@
             $"Opponent: {Client.GetOpponentClient()?.Id.ToString() ?? "none"}",
             Winner != Player.None ? $"{Winner} wins" : $"{Table.Game.WhoseTurn} to move",
             $"♔: {Table.Game.GetMana(Player.White)} | ♕: {Table.Game.GetCost<Queen>(Player.White)} | ♖: {Table.Game.GetCost<Rook>(Player.White)} | ♗: {Table.Game.GetCost<Bishop>(Player.White)} | ♘: {Table.Game.GetCost<Knight>(Player.White)} | ♙: {Table.Game.GetCost<Pawn>(Player.White)}",
-            $"♚: {Table.Game.GetMana(Player.Black)} | ♛: {Table.Game.GetCost<Queen>(Player.Black)} | ♜: {Table.Game.GetCost<Rook>(Player.Black)} | ♝: {Table.Game.GetCost<Bishop>(Player.Black)} | ♞: {Table.Game.GetCost<Knight>(Player.Black)} | ♟: {Table.Game.GetCost<Pawn>(Player.Black)}"
+            $"♚: {Table.Game.GetMana(Player.Black)} | ♛: {Table.Game.GetCost<Queen>(Player.Black)} | ♜: {Table.Game.GetCost<Rook>(Player.Black)} | ♝: {Table.Game.GetCost<Bishop>(Player.Black)} | ♞: {Table.Game.GetCost<Knight>(Player.Black)} | ♟: {Table.Game.GetCost<Pawn>(Player.Black)}",
+            $"Allocated tables: {PiecemakerGame.AllocatedTables}",
+            $"Open Tables: {PiecemakerGame.OpenTables}",
+            $"Ready Tables: {PiecemakerGame.ReadyTables}",
+            $"Playing Tables: {PiecemakerGame.PlayingTables}",
+            $"Paused Tables: {PiecemakerGame.PausedTables}",
+            $"Finished Tables: {PiecemakerGame.FinishedTables}",
+            $"Empty Tables: {PiecemakerGame.EmptyTables}"
         };
     }
     void IDisposable.Dispose()
