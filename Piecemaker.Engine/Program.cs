@@ -9,8 +9,8 @@ namespace Piecemaker.Engine
     {
         private readonly Random Random = new Random();
         public List<Table> Tables = new List<Table> { new Table((int)0xB0A12D) };
-        private System.Timers.Timer TableStatusPolling = new System.Timers.Timer(new TimeSpan(0, 0, seconds: 5).TotalMilliseconds);
-        private readonly TimeSpan MaxTableInactivity = new TimeSpan(0, minutes: 5, 0);
+        private System.Timers.Timer TableStatusPolling = new System.Timers.Timer(new TimeSpan(0, minutes:5, seconds: 0).TotalMilliseconds);
+        private readonly TimeSpan MaxTableInactivity = new TimeSpan(0, minutes: 10, 0);
         public int AllocatedTables => Tables.Count;
         public int OpenTables => Tables.Count(table => table.Status == Status.Open);
         public int ReadyTables => Tables.Count(table => table.Status == Status.Ready);
