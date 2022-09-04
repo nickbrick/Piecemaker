@@ -30,4 +30,20 @@ namespace Piecemaker.Engine
             Type = moveType;
         }
     }
+    public class SideSwapActionEventArgs : EventArgs
+    {
+        public bool SideSwapHappened { get; set; }
+        public SideSwapActionEventArgs(bool sideSwapHappened)
+        {
+            SideSwapHappened = sideSwapHappened;
+        }
+    }
+    public class ResetActionEventArgs : EventArgs
+    {
+        public bool ResetHappened { get; set; }
+        public ResetActionEventArgs(bool resetHappened)
+        {
+            ResetHappened = resetHappened;
+        }
+    }
 }

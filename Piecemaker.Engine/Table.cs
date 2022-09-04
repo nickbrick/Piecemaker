@@ -10,8 +10,8 @@ namespace Piecemaker.Engine
         public event EventHandler<Player> PlayerWonByCheckmate;
         public event EventHandler<Client> ClientJoined;
         public event EventHandler<Client> ClientDisconnected;
-        public event EventHandler SideSwapActionHandled;
-        public event EventHandler ResetActionHandled;
+        public event EventHandler<SideSwapActionEventArgs> SideSwapActionHandled;
+        public event EventHandler<ResetActionEventArgs> ResetActionHandled;
         public event EventHandler<Status> StatusChanged;
         public int Id { get; }
         public ChessGame Game { get; set; }
@@ -111,9 +111,11 @@ namespace Piecemaker.Engine
         }
         public void HandleSideSwapAction(Player clicker)
         {
+            bool sideSwapHappened = false;
             if (PlayingClientsCount == 1)
             {
                 Clients.ForEach(client => client.Player = ~client.Player);
+                sideSwapHappened = true;
             }
             else
             {
@@ -122,18 +124,23 @@ namespace Piecemaker.Engine
                 else
                 {
                     if (SideSwapInitiator == ~clicker)
+                    {
                         Clients.ForEach(client => client.Player = ~client.Player);
+                        sideSwapHappened = true;
+                    }
                     SideSwapInitiator = Player.None;
                 }
             }
-            SideSwapActionHandled?.Invoke(this, EventArgs.Empty);
+            SideSwapActionHandled?.Invoke(this, new SideSwapActionEventArgs(sideSwapHappened));
         }
         public void HandleResetAction(Player clicker)
         {
+            bool resetHappened = false;
             if (PlayingClientsCount == 1)
             {
                 Game = new ChessGame(ChessGame.StartingFen);
                 Status = Status.Open;
+                resetHappened = true;
             }
             else
             {
@@ -145,11 +152,12 @@ namespace Piecemaker.Engine
                     {
                         Game = new ChessGame(ChessGame.StartingFen);
                         Status = Status.Ready;
+                        resetHappened = true;
                     }
                     ResetInitiator = Player.None;
                 }
             }
-            ResetActionHandled?.Invoke(this, EventArgs.Empty);
+            ResetActionHandled?.Invoke(this, new ResetActionEventArgs(resetHappened));
         }
     }
     public enum Status

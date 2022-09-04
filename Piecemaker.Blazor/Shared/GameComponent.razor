@@ -104,7 +104,7 @@
     private Dictionary<string, int> GetGameManasAndCosts()
     {
         return new Dictionary<string, int>
-    {
+{
             {".piece-cost-wP", Table.Game.WhitePieceCosts.Pawn},
             {".piece-cost-wN", Table.Game.WhitePieceCosts.Knight},
             {".piece-cost-wB", Table.Game.WhitePieceCosts.Bishop},
@@ -145,19 +145,28 @@
         if (Client != e)
             await InvokeAsync(StateHasChanged);
     }
-    private async void Table_SideSwapActionHandled(object sender, EventArgs e)
+    private async void Table_SideSwapActionHandled(object sender, SideSwapActionEventArgs e)
     {
         try
         {
-            await JSRuntime.InvokeVoidAsync("setOrientation", Client.Player.ToString().ToLower());
+            if (e.SideSwapHappened)
+                await JSRuntime.InvokeVoidAsync("setOrientation", Client.Player.ToString().ToLower());
             await InvokeAsync(StateHasChanged);
         }
         catch (TaskCanceledException) { }
     }
-    private async void Table_ResetActionHandled(object sender, EventArgs e)
+    private async void Table_ResetActionHandled(object sender, ResetActionEventArgs e)
     {
-        await JSRuntime.InvokeVoidAsync("setPosition", Table.Game.GetFen().Split()[0]);
-        await InvokeAsync(StateHasChanged);
+        try
+        {
+            if (e.ResetHappened)
+            {
+                await JSRuntime.InvokeVoidAsync("setPosition", Table.Game.GetFen().Split()[0]);
+                await JSRuntime.InvokeVoidAsync("highlightSquares", "", "");
+            }
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (TaskCanceledException) { }
     }
     private async void Table_StatusChanged(object sender, Status e)
     {
