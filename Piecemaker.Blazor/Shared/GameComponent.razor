@@ -4,11 +4,14 @@
 @using Piecemaker.Blazor.Shared;
 <h3>Table @Table.Id.ToString("x"): @Table.Status</h3>
 <div id="myBoard" style="width: 400px"></div>
-<CascadingValue Value="@this">
-    <TableActionButton Action="TableActionButton.TableAction.FindNew"></TableActionButton>
-    <TableActionButton Action="TableActionButton.TableAction.OpenClose"></TableActionButton>
-    <TableActionButton Action="TableActionButton.TableAction.SwapSides"></TableActionButton>
-</CascadingValue>
+<div style="display:flex;">
+    <CascadingValue Value="@this">
+        <TableActionButton Action="TableActionButton.TableAction.FindNew"></TableActionButton>
+        <TableActionButton Action="TableActionButton.TableAction.OpenClose"></TableActionButton>
+        <TableActionButton Action="TableActionButton.TableAction.SwapSides"></TableActionButton>
+        <TableActionButton Action="TableActionButton.TableAction.Reset"></TableActionButton>
+    </CascadingValue>
+</div>
 <audio id="audio-check" style="display:none;" src="/webm/move-check.webm"></audio>
 <audio id="audio-capture" style="display:none;" src="/webm/capture.webm"></audio>
 <audio id="audio-promote" style="display:none;" src="/webm/promote.webm"></audio>
@@ -39,7 +42,8 @@
         Table.ValidMoveWasMade += Table_ValidMoveWasMade;
         Table.ClientJoined += Table_ClientJoined;
         Table.ClientDisconnected += Table_ClientDisconnected;
-        Table.SideSwapActionHandled += Table_SideSwapClicked;
+        Table.SideSwapActionHandled += Table_SideSwapActionHandled;
+        Table.ResetActionHandled += Table_ResetActionHandled;
         Table.StatusChanged += Table_StatusChanged;
         Client = Table.Join();
     }
@@ -87,7 +91,7 @@
             System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
             await InvokeAsync(StateHasChanged);
         }
-        catch (TaskCanceledException ex) { }
+        catch (TaskCanceledException) { }
     }
     private string GetSoundName(MoveEventArgs e)
     {
@@ -141,14 +145,19 @@
         if (Client != e)
             await InvokeAsync(StateHasChanged);
     }
-    private async void Table_SideSwapClicked(object sender, EventArgs e)
+    private async void Table_SideSwapActionHandled(object sender, EventArgs e)
     {
         try
         {
             await JSRuntime.InvokeVoidAsync("setOrientation", Client.Player.ToString().ToLower());
             await InvokeAsync(StateHasChanged);
         }
-        catch (TaskCanceledException ex) { }
+        catch (TaskCanceledException) { }
+    }
+    private async void Table_ResetActionHandled(object sender, EventArgs e)
+    {
+        await JSRuntime.InvokeVoidAsync("setPosition", Table.Game.GetFen().Split()[0]);
+        await InvokeAsync(StateHasChanged);
     }
     private async void Table_StatusChanged(object sender, Status e)
     {

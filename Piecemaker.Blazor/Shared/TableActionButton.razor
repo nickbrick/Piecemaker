@@ -11,7 +11,8 @@
     {
         OpenClose,
         FindNew,
-        SwapSides
+        SwapSides,
+        Reset
     }
     protected async override void OnInitialized()
     {
@@ -49,18 +50,40 @@
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, SwapSides);
                 break;
+            case TableAction.Reset:
+                Text = () =>
+                {
+                    if (Context.Table.Status == Status.Playing)
+                        if (Context.Table.ResetInitiator == ChessDotCore.Player.None)
+                            return "Ask to reset board";
+                        else if (Context.Table.ResetInitiator == Context.Client.Player)
+                            return "Waiting for opponent to accept. Click again to cancel";
+                        else if (Context.Table.ResetInitiator == ~Context.Client.Player)
+                            return "Opponent wants to reset. Click to accept";
+                    return "Reset board";
+                };
+                IsHidden = () =>
+                {
+                    return (Context.Table.Status == Status.Open || Context.Table.Status == Status.Ready);
+                };
+                OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, Reset);
+                break;
         }
     }
-    public void FindTable()
+    private void FindTable()
     {
         NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrDefault().Id.ToString("x")}", true);
     }
-    public void OpenCloseTable()
+    private void OpenCloseTable()
     {
         Context.Table.OpenClose();
     }
-    public void SwapSides()
+    private void SwapSides()
     {
         Context.Table.HandleSideSwapAction(Context.Client.Player);
+    }
+    private void Reset()
+    {
+        Context.Table.HandleResetAction(Context.Client.Player);
     }
 }

@@ -11,6 +11,7 @@ namespace Piecemaker.Engine
         public event EventHandler<Client> ClientJoined;
         public event EventHandler<Client> ClientDisconnected;
         public event EventHandler SideSwapActionHandled;
+        public event EventHandler ResetActionHandled;
         public event EventHandler<Status> StatusChanged;
         public int Id { get; }
         public ChessGame Game { get; set; }
@@ -19,6 +20,7 @@ namespace Piecemaker.Engine
         private List<Client> Clients { get; set; }
         public int PlayingClientsCount => Clients.Count(client => client.Player != Player.None);
         public Player SideSwapInitiator = Player.None;
+        public Player ResetInitiator = Player.None;
         public Client WhiteClient => Clients.SingleOrDefault(client => client.Player == Player.White);
         public Client BlackClient => Clients.SingleOrDefault(client => client.Player == Player.Black);
         public Table(int id)
@@ -125,6 +127,29 @@ namespace Piecemaker.Engine
                 }
             }
             SideSwapActionHandled?.Invoke(this, EventArgs.Empty);
+        }
+        public void HandleResetAction(Player clicker)
+        {
+            if (PlayingClientsCount == 1)
+            {
+                Game = new ChessGame(ChessGame.StartingFen);
+                Status = Status.Open;
+            }
+            else
+            {
+                if (ResetInitiator == Player.None)
+                    ResetInitiator = clicker;
+                else
+                {
+                    if (ResetInitiator == ~clicker)
+                    {
+                        Game = new ChessGame(ChessGame.StartingFen);
+                        Status = Status.Ready;
+                    }
+                    ResetInitiator = Player.None;
+                }
+            }
+            ResetActionHandled?.Invoke(this, EventArgs.Empty);
         }
     }
     public enum Status
