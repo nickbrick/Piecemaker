@@ -53,8 +53,7 @@
     }
     public void FindTable()
     {
-        NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrDefault().Id.ToString("x")}");
-        StateHasChanged();
+        NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrDefault().Id.ToString("x")}", true);
     }
     public void OpenCloseTable()
     {
