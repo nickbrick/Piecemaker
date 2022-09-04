@@ -1,11 +1,12 @@
 ﻿@inject NavigationManager NavManager
-<button class="btn-danger" hidden="@(IsHidden())" @onclick="@OnClick">@(Text())</button>
+<button class="button@(IsEmphasized() ? " emphasis":"")" disabled="@(IsHidden())" @onclick="@OnClick">@(Text())</button>
 @code {
     [CascadingParameter] public GameComponent Context { get; set; }
     [Parameter] public TableAction Action { get; set; }
     private EventCallback<MouseEventArgs> OnClick;
     private Func<string> Text;
     private Func<bool> IsHidden = () => false;
+    private Func<bool> IsEmphasized = () => false;
 
     public enum TableAction
     {
@@ -19,7 +20,11 @@
         switch (Action)
         {
             case TableAction.FindNew:
-                Text = () => { return "Find table"; };
+                Text = () => { return "Find new table"; };
+                IsHidden = () =>
+                {
+                    return Context.Table.Status == Status.Playing;
+                };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, FindTable);
                 break;
             case TableAction.OpenClose:
@@ -35,9 +40,9 @@
                 Text = () =>
                 {
                     if (Context.Table.SideSwapInitiator == Context.Client.Player)
-                        return "Waiting for opponent to accept. Click again to cancel";
+                        return "Cancel side swap request";
                     else if (Context.Table.SideSwapInitiator == ~Context.Client.Player)
-                        return "Opponent wants to swap sides. Click to accept";
+                        return "Accept side swap request";
                     else if (Context.Table.PlayingClientsCount == 2)
                         return "Ask to swap sides";
                     else
@@ -49,24 +54,27 @@
                         || !(Context.Table.Status == Status.Open || Context.Table.Status == Status.Closed || Context.Table.Status == Status.Ready);
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, SwapSides);
+                IsEmphasized = () => { return Context.Table.SideSwapInitiator == ~Context.Client.Player; };
                 break;
             case TableAction.Reset:
                 Text = () =>
                 {
-                    if (Context.Table.Status == Status.Playing)
-                        if (Context.Table.ResetInitiator == ChessDotCore.Player.None)
-                            return "Ask to reset board";
-                        else if (Context.Table.ResetInitiator == Context.Client.Player)
-                            return "Waiting for opponent to accept. Click again to cancel";
-                        else if (Context.Table.ResetInitiator == ~Context.Client.Player)
-                            return "Opponent wants to reset. Click to accept";
+                    if (Context.Table.PlayingClientsCount == 2)
+                        if (Context.Table.Status == Status.Playing || Context.Table.Status == Status.Finished)
+                            if (Context.Table.ResetInitiator == ChessDotCore.Player.None)
+                                return "Ask to reset board";
+                            else if (Context.Table.ResetInitiator == Context.Client.Player)
+                                return "Cancel reset request";
+                            else if (Context.Table.ResetInitiator == ~Context.Client.Player)
+                                return "Accept reset request";
                     return "Reset board";
                 };
                 IsHidden = () =>
                 {
-                    return (Context.Table.Status == Status.Open || Context.Table.Status == Status.Ready);
+                    return (Context.Table.Status == Status.Open || Context.Table.Status == Status.Ready || Context.Table.Status == Status.Closed);
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, Reset);
+                IsEmphasized = () => { return Context.Table.ResetInitiator == ~Context.Client.Player; };
                 break;
         }
     }

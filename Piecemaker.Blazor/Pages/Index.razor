@@ -1,7 +1,9 @@
 ﻿@page "/"
 @page "/{DesiredGameId}"
 @inject NavigationManager NavManager
-<GameComponent Table="@Table"></GameComponent>
+<div class="game-container">
+    <GameComponent Table="@Table"></GameComponent>
+</div>
 @code{
     [Parameter] public string DesiredGameId { get; set; }
     Table Table;

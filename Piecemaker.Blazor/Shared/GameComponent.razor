@@ -3,8 +3,8 @@
 @using ChessDotCore;
 @using Piecemaker.Blazor.Shared;
 <h3>Table @Table.Id.ToString("x"): @Table.Status</h3>
-<div id="myBoard" style="width: 400px"></div>
-<div style="display:flex;">
+<div id="myBoard" style="width: 100%;"></div>
+<div style="display:flex; flex-direction:column;">
     <CascadingValue Value="@this">
         <TableActionButton Action="TableActionButton.TableAction.FindNew"></TableActionButton>
         <TableActionButton Action="TableActionButton.TableAction.OpenClose"></TableActionButton>
