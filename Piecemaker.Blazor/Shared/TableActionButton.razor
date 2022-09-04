@@ -1,0 +1,67 @@
+﻿@inject NavigationManager NavManager
+<button class="btn-danger" hidden="@(IsHidden())" @onclick="@OnClick">@(Text())</button>
+@code {
+    [CascadingParameter] public GameComponent Context { get; set; }
+    [Parameter] public TableAction Action { get; set; }
+    private EventCallback<MouseEventArgs> OnClick;
+    private Func<string> Text;
+    private Func<bool> IsHidden = () => false;
+
+    public enum TableAction
+    {
+        OpenClose,
+        FindNew,
+        SwapSides
+    }
+    protected async override void OnInitialized()
+    {
+        switch (Action)
+        {
+            case TableAction.FindNew:
+                Text = () => { return "Find table"; };
+                OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, FindTable);
+                break;
+            case TableAction.OpenClose:
+                Text = () => { return Context.Table.Status != Status.Closed ? "Close table" : "Open table"; };
+                IsHidden = () =>
+                {
+                    return Context.Client.Player == ChessDotCore.Player.None
+                        || !(Context.Table.Status == Status.Open || Context.Table.Status == Status.Closed);
+                };
+                OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, OpenCloseTable);
+                break;
+            case TableAction.SwapSides:
+                Text = () =>
+                {
+                    if (Context.Table.SideSwapInitiator == Context.Client.Player)
+                        return "Waiting for opponent to accept. Click again to cancel";
+                    else if (Context.Table.SideSwapInitiator == ~Context.Client.Player)
+                        return "Opponent wants to swap sides. Click to accept";
+                    else if (Context.Table.PlayingClientsCount == 2)
+                        return "Ask to swap sides";
+                    else
+                        return "Change side";
+                };
+                IsHidden = () =>
+                {
+                    return Context.Client.Player == ChessDotCore.Player.None
+                        || !(Context.Table.Status == Status.Open || Context.Table.Status == Status.Closed || Context.Table.Status == Status.Ready);
+                };
+                OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, SwapSides);
+                break;
+        }
+    }
+    public void FindTable()
+    {
+        NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrDefault().Id.ToString("x")}");
+        StateHasChanged();
+    }
+    public void OpenCloseTable()
+    {
+        Context.Table.OpenClose();
+    }
+    public void SwapSides()
+    {
+        Context.Table.HandleSideSwapAction(Context.Client.Player);
+    }
+}

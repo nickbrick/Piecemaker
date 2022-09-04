@@ -6,14 +6,14 @@ function registerGameComponentObject(dotNetObjRef_) {
     dotNetObjRef = dotNetObjRef_;
 }
 function init(fen, player_, lastMove) {
-    player = player_;
+    player = player_[0];
     board = Chessboard('myBoard', {
         draggable: true,
         sparePieces: true,
         position: fen,
         onDrop: onDrop,
         onDragStart: onDragStart,
-        orientation: player == 'b' ? 'black' : 'white'
+        orientation: player_
     });
     highlightSquares(lastMove.split('-')[0], lastMove.split('-')[1]);
 }
@@ -53,7 +53,7 @@ function setPosition(fen) {
     board.position(fen);
 }
 function setValidMoves(moves, player, summonables) {
-    whoseMove = player;
+    whoseMove = player[0];
     validMoves = moves;
     $('.spare-pieces-7492f img[data-piece]').addClass('locked');
     $(`.spare-pieces-7492f .piece-cost span`).addClass('locked');
@@ -75,4 +75,8 @@ function updateMana(kvs) {
     Object.keys(kvs).forEach(key => {
         $(key).text(kvs[key]);
     });
+}
+function setOrientation(player_) {
+    board.orientation(player_);
+    player = player_[0];
 }

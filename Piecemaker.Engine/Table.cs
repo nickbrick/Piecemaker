@@ -10,11 +10,15 @@ namespace Piecemaker.Engine
         public event EventHandler<Player> PlayerWonByCheckmate;
         public event EventHandler<Client> ClientJoined;
         public event EventHandler<Client> ClientDisconnected;
+        public event EventHandler SideSwapActionHandled;
+        public event EventHandler<Status> StatusChanged;
         public int Id { get; }
         public ChessGame Game { get; set; }
         public Status Status { get; set; }
         public DateTime LastActivityAt { get; private set; }
         private List<Client> Clients { get; set; }
+        public int PlayingClientsCount => Clients.Count(client => client.Player != Player.None);
+        public Player SideSwapInitiator = Player.None;
         public Client WhiteClient => Clients.SingleOrDefault(client => client.Player == Player.White);
         public Client BlackClient => Clients.SingleOrDefault(client => client.Player == Player.Black);
         public Table(int id)
@@ -68,6 +72,9 @@ namespace Piecemaker.Engine
                 case Status.Open:
                     Status = Status.Ready;
                     break;
+                case Status.Paused:
+                    Status = PlayingClientsCount == 2 ? Status.Playing : Status.Paused;
+                    break;
             }
 
             ClientJoined?.Invoke(this, client);
@@ -95,14 +102,39 @@ namespace Piecemaker.Engine
             LastActivityAt = DateTime.UtcNow;
             ClientDisconnected?.Invoke(this, client);
         }
+        public void OpenClose()
+        {
+            Status = Status == Status.Closed ? Status.Open : Status.Closed;
+            StatusChanged?.Invoke(this, Status);
+        }
+        public void HandleSideSwapAction(Player clicker)
+        {
+            if (PlayingClientsCount == 1)
+            {
+                Clients.ForEach(client => client.Player = ~client.Player);
+            }
+            else
+            {
+                if (SideSwapInitiator == Player.None)
+                    SideSwapInitiator = clicker;
+                else
+                {
+                    if (SideSwapInitiator == ~clicker)
+                        Clients.ForEach(client => client.Player = ~client.Player);
+                    SideSwapInitiator = Player.None;
+                }
+            }
+            SideSwapActionHandled?.Invoke(this, EventArgs.Empty);
+        }
     }
     public enum Status
     {
         Empty,          // Should be disposed
         Open,           // One player in starting position, use for finding game
+        Closed,         // One player in starting position, need url to join
         Ready,          // Two players in starting position
         Playing,        // Two players and not in starting position, leave it alone
-        Paused,         // One player and not in starting position
+        Paused,         // One player and not in starting position, need url to join
         Finished        // Checkmate happened
     }
 }

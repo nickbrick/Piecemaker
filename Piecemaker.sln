@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32630.194
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piecemaker.Blazor", "Piecemaker.Blazor\Piecemaker.Blazor.csproj", "{625A266D-EBAD-41E0-8006-7255FBCB3E79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Piecemaker.Blazor", "Piecemaker.Blazor\Piecemaker.Blazor.csproj", "{625A266D-EBAD-41E0-8006-7255FBCB3E79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piecemaker.Engine", "Piecemaker.Engine\Piecemaker.Engine.csproj", "{DF4A8D7C-1563-44B9-994A-B74987A3D7AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Piecemaker.Engine", "Piecemaker.Engine\Piecemaker.Engine.csproj", "{DF4A8D7C-1563-44B9-994A-B74987A3D7AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chess.Core", "Chess.Core", "{4732A334-7A0D-4DD5-9F70-07770240C94D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessDotCore", "Chess.Core\ChessDotCore\ChessDotCore.csproj", "{208E8DBD-7C19-40BF-AB63-707D9F72D9B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piecemaker.Console", "Piecemaker.Console\Piecemaker.Console.csproj", "{230ACCA7-F89A-4A26-8008-3D06092A506E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Piecemaker.Console", "Piecemaker.Console\Piecemaker.Console.csproj", "{230ACCA7-F89A-4A26-8008-3D06092A506E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

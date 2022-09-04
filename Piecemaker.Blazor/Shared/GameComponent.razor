@@ -1,28 +1,31 @@
 ﻿@implements IDisposable
 @inject IJSRuntime JsRuntime
-@using ChessDotCore.Pieces;
 @using ChessDotCore;
+@using Piecemaker.Blazor.Shared;
 <h3>Table @Table.Id.ToString("x"): @Table.Status</h3>
 <div id="myBoard" style="width: 400px"></div>
+<CascadingValue Value="@this">
+    <TableActionButton Action="TableActionButton.TableAction.FindNew"></TableActionButton>
+    <TableActionButton Action="TableActionButton.TableAction.OpenClose"></TableActionButton>
+    <TableActionButton Action="TableActionButton.TableAction.SwapSides"></TableActionButton>
+</CascadingValue>
 <audio id="audio-check" style="display:none;" src="/webm/move-check.webm"></audio>
 <audio id="audio-capture" style="display:none;" src="/webm/capture.webm"></audio>
 <audio id="audio-promote" style="display:none;" src="/webm/promote.webm"></audio>
 <audio id="audio-move-opponent" style="display:none;" src="/webm/move-opponent.webm"></audio>
 <audio id="audio-move-self" style="display:none;" src="/webm/move-self.webm"></audio>
 <ul>
-    @foreach (var line in Status)
+    @foreach (var line in DebugState)
     {
         <li>@line</li>
     }
-
 </ul>
 <p>Piecemaker alpha @System.Environment.GetEnvironmentVariable("HEROKU_RELEASE_VERSION")</p>
 @code {
     public Engine.Program PiecemakerGame => Blazor.Program.Piecemaker;
     public Client Client { get; set; }
-    [Parameter]
-    public Table Table { get; set; }
-    private string[] Status => GetStatusString();
+    [Parameter] public Table Table { get; set; }
+    private string[] DebugState => GetDebugStateString();
     private string SimpleFen => Table.Game.GetFen().Split()[0];
     private string LastMove => Table.Game.Moves.LastOrDefault()?.ToString() ?? "";
     private Player Winner => Table.Game.IsCheckmated(Player.White) ? Player.Black : Table.Game.IsCheckmated(Player.Black) ? Player.White : Player.None;
@@ -31,23 +34,25 @@
     public GameComponent()
     {
     }
-    protected async override void OnInitialized()
+    protected override void OnInitialized()
     {
         Table.ValidMoveWasMade += Table_ValidMoveWasMade;
         Table.ClientJoined += Table_ClientJoined;
         Table.ClientDisconnected += Table_ClientDisconnected;
+        Table.SideSwapActionHandled += Table_SideSwapClicked;
+        Table.StatusChanged += Table_StatusChanged;
         Client = Table.Join();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower()[0], LastMove);
+            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower(), LastMove);
             await InitGameComponentInstance();
         }
         await JSRuntime.InvokeVoidAsync("setValidMoves",
             Client.ValidMoves,
-            Table.Game.WhoseTurn.ToString().ToLower()[0],
+            Table.Game.WhoseTurn.ToString().ToLower(),
             Table.Game.WhiteSummonablePieces.Select(s => "w" + s).ToList().Concat(
             Table.Game.BlackSummonablePieces.Select(s => "b" + s.ToUpper()).ToList())
         );
@@ -82,8 +87,7 @@
             System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
             await InvokeAsync(StateHasChanged);
         }
-        catch
-        { }
+        catch (TaskCanceledException ex) { }
     }
     private string GetSoundName(MoveEventArgs e)
     {
@@ -112,6 +116,22 @@
             {".mana-black", Table.Game.BlackMana}
         };
     }
+    private string[] GetDebugStateString()
+    {
+        return new string[] {
+            $"You are {Client.Id} ({Client.Player})",
+            $"Opponent: {Client.GetOpponentClient()?.Id.ToString() ?? "none"}",
+            Winner != Player.None ? $"{Winner} wins" : $"{Table.Game.WhoseTurn} to move",
+            $"Allocated tables: {PiecemakerGame.AllocatedTables}",
+            $"Open Tables: {PiecemakerGame.OpenTables}",
+            $"Closed Tables: {PiecemakerGame.ClosedTables}",
+            $"Ready Tables: {PiecemakerGame.ReadyTables}",
+            $"Playing Tables: {PiecemakerGame.PlayingTables}",
+            $"Paused Tables: {PiecemakerGame.PausedTables}",
+            $"Finished Tables: {PiecemakerGame.FinishedTables}",
+            $"Empty Tables: {PiecemakerGame.EmptyTables}"
+        };
+    }
     private async void Table_ClientJoined(object sender, Client e)
     {
         await InvokeAsync(StateHasChanged);
@@ -121,22 +141,18 @@
         if (Client != e)
             await InvokeAsync(StateHasChanged);
     }
-    private string[] GetStatusString()
+    private async void Table_SideSwapClicked(object sender, EventArgs e)
     {
-        return new string[] {
-            $"You are {Client.Id} ({Client.Player})",
-            $"Opponent: {Client.GetOpponentClient()?.Id.ToString() ?? "none"}",
-            Winner != Player.None ? $"{Winner} wins" : $"{Table.Game.WhoseTurn} to move",
-            $"♔: {Table.Game.GetMana(Player.White)} | ♕: {Table.Game.GetCost<Queen>(Player.White)} | ♖: {Table.Game.GetCost<Rook>(Player.White)} | ♗: {Table.Game.GetCost<Bishop>(Player.White)} | ♘: {Table.Game.GetCost<Knight>(Player.White)} | ♙: {Table.Game.GetCost<Pawn>(Player.White)}",
-            $"♚: {Table.Game.GetMana(Player.Black)} | ♛: {Table.Game.GetCost<Queen>(Player.Black)} | ♜: {Table.Game.GetCost<Rook>(Player.Black)} | ♝: {Table.Game.GetCost<Bishop>(Player.Black)} | ♞: {Table.Game.GetCost<Knight>(Player.Black)} | ♟: {Table.Game.GetCost<Pawn>(Player.Black)}",
-            $"Allocated tables: {PiecemakerGame.AllocatedTables}",
-            $"Open Tables: {PiecemakerGame.OpenTables}",
-            $"Ready Tables: {PiecemakerGame.ReadyTables}",
-            $"Playing Tables: {PiecemakerGame.PlayingTables}",
-            $"Paused Tables: {PiecemakerGame.PausedTables}",
-            $"Finished Tables: {PiecemakerGame.FinishedTables}",
-            $"Empty Tables: {PiecemakerGame.EmptyTables}"
-        };
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("setOrientation", Client.Player.ToString().ToLower());
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (TaskCanceledException ex) { }
+    }
+    private async void Table_StatusChanged(object sender, Status e)
+    {
+        await InvokeAsync(StateHasChanged);
     }
     void IDisposable.Dispose()
     {

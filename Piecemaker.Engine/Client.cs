@@ -11,7 +11,7 @@ namespace Piecemaker.Engine
         public Guid Id;
         public Player Player { get; set; }
         private Table Table { get; }
-        public List<string> ValidMoves => Table.Game.GetValidMoves(Player).Select(move => move.ToString()).ToList();
+        public List<string> ValidMoves => Table.PlayingClientsCount == 2 ? Table.Game.GetValidMoves(Player).Select(move => move.ToString()).ToList() : new List<string>();
         public Client(Table table)
         {
             Id = Guid.NewGuid();
