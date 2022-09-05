@@ -1,10 +1,11 @@
 ﻿@inject NavigationManager NavManager
-<button class="button@(IsEmphasized() ? " emphasis":"")" disabled="@(IsHidden())" @onclick="@OnClick">@(Text())</button>
+<button class="button@(IsEmphasized() ? " emphasis":"")" disabled="@(IsDisabled())" hidden="@(IsHidden())" @onclick="@OnClick">@(Text())</button>
 @code {
     [CascadingParameter] public GameComponent Context { get; set; }
     [Parameter] public TableAction Action { get; set; }
     private EventCallback<MouseEventArgs> OnClick;
     private Func<string> Text;
+    private Func<bool> IsDisabled = () => false;
     private Func<bool> IsHidden = () => false;
     private Func<bool> IsEmphasized = () => false;
 
@@ -21,7 +22,7 @@
         {
             case TableAction.FindNew:
                 Text = () => { return "Find new table"; };
-                IsHidden = () =>
+                IsDisabled = () =>
                 {
                     return Context.Table.Status == Status.Playing;
                 };
@@ -29,12 +30,13 @@
                 break;
             case TableAction.OpenClose:
                 Text = () => { return Context.Table.Status != Status.Closed ? "Close table" : "Open table"; };
-                IsHidden = () =>
+                IsDisabled = () =>
                 {
                     return Context.Client.Player == ChessDotCore.Player.None
                         || !(Context.Table.Status == Status.Open || Context.Table.Status == Status.Closed);
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, OpenCloseTable);
+                IsHidden = () => { return Context.Client.Player == ChessDotCore.Player.None; };
                 break;
             case TableAction.SwapSides:
                 Text = () =>
@@ -48,13 +50,14 @@
                     else
                         return "Change side";
                 };
-                IsHidden = () =>
+                IsDisabled = () =>
                 {
                     return Context.Client.Player == ChessDotCore.Player.None
                         || !(Context.Table.Status == Status.Open || Context.Table.Status == Status.Closed || Context.Table.Status == Status.Ready);
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, SwapSides);
                 IsEmphasized = () => { return Context.Table.SideSwapInitiator == ~Context.Client.Player; };
+                IsHidden = () => { return Context.Client.Player == ChessDotCore.Player.None; };
                 break;
             case TableAction.Reset:
                 Text = () =>
@@ -69,12 +72,13 @@
                                 return "Accept reset request";
                     return "Reset board";
                 };
-                IsHidden = () =>
+                IsDisabled = () =>
                 {
                     return (Context.Table.Status == Status.Open || Context.Table.Status == Status.Ready || Context.Table.Status == Status.Closed);
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, Reset);
                 IsEmphasized = () => { return Context.Table.ResetInitiator == ~Context.Client.Player; };
+                IsHidden = () => { return Context.Client.Player == ChessDotCore.Player.None; };
                 break;
         }
     }
