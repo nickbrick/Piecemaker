@@ -69,7 +69,7 @@ function highlightSquares(from, to) {
     $(`.square-${to}`).addClass('highlight');
 }
 function playSound(soundName) {
-    $(soundName)[0].play();
+    $("#"+soundName)[0].play();
 }
 function updateMana(kvs) {
     Object.keys(kvs).forEach(key => {

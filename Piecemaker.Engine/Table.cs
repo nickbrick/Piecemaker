@@ -10,8 +10,8 @@ namespace Piecemaker.Engine
         public event EventHandler<Player> PlayerWonByCheckmate;
         public event EventHandler<Client> ClientJoined;
         public event EventHandler<Client> ClientDisconnected;
-        public event EventHandler<SideSwapActionEventArgs> SideSwapActionHandled;
-        public event EventHandler<ResetActionEventArgs> ResetActionHandled;
+        public event EventHandler<ActionEventArgs> SideSwapActionHandled;
+        public event EventHandler<ActionEventArgs> ResetActionHandled;
         public event EventHandler<Status> StatusChanged;
         public int Id { get; }
         public ChessGame Game { get; set; }
@@ -109,55 +109,65 @@ namespace Piecemaker.Engine
             Status = Status == Status.Closed ? Status.Open : Status.Closed;
             StatusChanged?.Invoke(this, Status);
         }
-        public void HandleSideSwapAction(Player clicker)
+        public void HandleSideSwapAction(Player actor)
         {
-            bool sideSwapHappened = false;
+            ActionEventArgs.ActionState state;
             if (PlayingClientsCount == 1)
             {
                 Clients.ForEach(client => client.Player = ~client.Player);
-                sideSwapHappened = true;
+                state = ActionEventArgs.ActionState.Completed;
             }
             else
             {
                 if (SideSwapInitiator == Player.None)
-                    SideSwapInitiator = clicker;
+                {
+                    SideSwapInitiator = actor;
+                    state = ActionEventArgs.ActionState.Initiated;
+                }
                 else
                 {
-                    if (SideSwapInitiator == ~clicker)
+                    if (SideSwapInitiator == ~actor)
                     {
                         Clients.ForEach(client => client.Player = ~client.Player);
-                        sideSwapHappened = true;
+                        state = ActionEventArgs.ActionState.Completed;
                     }
+                    else
+                        state = ActionEventArgs.ActionState.Cancelled;
                     SideSwapInitiator = Player.None;
                 }
             }
-            SideSwapActionHandled?.Invoke(this, new SideSwapActionEventArgs(sideSwapHappened));
+            SideSwapActionHandled?.Invoke(this, new ActionEventArgs(state, actor));
         }
-        public void HandleResetAction(Player clicker)
+        public void HandleResetAction(Player actor)
         {
-            bool resetHappened = false;
+            ActionEventArgs.ActionState state;
             if (PlayingClientsCount == 1)
             {
                 Game = new ChessGame(ChessGame.StartingFen);
                 Status = Status.Open;
-                resetHappened = true;
+                state = ActionEventArgs.ActionState.Completed;
             }
             else
             {
                 if (ResetInitiator == Player.None)
-                    ResetInitiator = clicker;
+                {
+                    ResetInitiator = actor;
+                    state = ActionEventArgs.ActionState.Initiated;
+                }
                 else
                 {
-                    if (ResetInitiator == ~clicker)
+                    if (ResetInitiator == ~actor)
                     {
                         Game = new ChessGame(ChessGame.StartingFen);
                         Status = Status.Ready;
-                        resetHappened = true;
+                        state = ActionEventArgs.ActionState.Completed;
                     }
+                    else
+                        state = ActionEventArgs.ActionState.Cancelled;
                     ResetInitiator = Player.None;
                 }
             }
-            ResetActionHandled?.Invoke(this, new ResetActionEventArgs(resetHappened));
+            ResetActionHandled?.Invoke(this, new ActionEventArgs(state, actor));
         }
     }
     public enum Status

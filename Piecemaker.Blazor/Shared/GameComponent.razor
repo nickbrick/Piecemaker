@@ -12,11 +12,14 @@
         <TableActionButton Action="TableActionButton.TableAction.Reset"></TableActionButton>
     </CascadingValue>
 </div>
-<audio id="audio-check" style="display:none;" src="/webm/move-check.webm"></audio>
-<audio id="audio-capture" style="display:none;" src="/webm/capture.webm"></audio>
-<audio id="audio-promote" style="display:none;" src="/webm/promote.webm"></audio>
-<audio id="audio-move-opponent" style="display:none;" src="/webm/move-opponent.webm"></audio>
-<audio id="audio-move-self" style="display:none;" src="/webm/move-self.webm"></audio>
+<audio id="@SoundNames.Check" style="display:none;" src="/webm/move-check.webm"></audio>
+<audio id="@SoundNames.Capture" style="display:none;" src="/webm/capture.webm"></audio>
+<audio id="@SoundNames.Summon" style="display:none;" src="/webm/promote.webm"></audio>
+<audio id="@SoundNames.MoveOpponent" style="display:none;" src="/webm/move-opponent.webm"></audio>
+<audio id="@SoundNames.MoveSelf" style="display:none;" src="/webm/move-self.webm"></audio>
+<audio id="@SoundNames.OpponentJoined" style="display:none;" src="/webm/game-start.webm"></audio>
+<audio id="@SoundNames.OpponentDisconnected" style="display:none;" src="/webm/game-end.webm"></audio>
+<audio id="@SoundNames.IncomingActionRequest" style="display:none;" src="/webm/notify.webm"></audio>
 <ul>
     @foreach (var line in DebugState)
     {
@@ -86,21 +89,14 @@
             System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
             await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
             await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
-            await JSRuntime.InvokeVoidAsync("playSound", GetSoundName(e));
+            await JSRuntime.InvokeVoidAsync("playSound", SoundNames.GetMoveSoundName(e, Client.Player));
 
             System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
             await InvokeAsync(StateHasChanged);
         }
         catch (TaskCanceledException) { }
     }
-    private string GetSoundName(MoveEventArgs e)
-    {
-        if (e.Type.HasFlag(MoveType.Check)) return "#audio-check";
-        if (e.Type.HasFlag(MoveType.Capture)) return "#audio-capture";
-        if (e.Type.HasFlag(MoveType.Summon)) return "#audio-promote";
-        if (e.Player != Client.Player) return "#audio-move-opponent";
-        return "#audio-move-self";
-    }
+
     private Dictionary<string, int> GetGameManasAndCosts()
     {
         return new Dictionary<string, int>
@@ -138,32 +134,50 @@
     }
     private async void Table_ClientJoined(object sender, Client e)
     {
-        await InvokeAsync(StateHasChanged);
-    }
-    private async void Table_ClientDisconnected(object sender, Client e)
-    {
-        if (Client != e)
-            await InvokeAsync(StateHasChanged);
-    }
-    private async void Table_SideSwapActionHandled(object sender, SideSwapActionEventArgs e)
-    {
         try
         {
-            if (e.SideSwapHappened)
-                await JSRuntime.InvokeVoidAsync("setOrientation", Client.Player.ToString().ToLower());
+            if (Client != null && e.Player != Player.None)
+                await JSRuntime.InvokeVoidAsync("playSound", SoundNames.OpponentJoined);
             await InvokeAsync(StateHasChanged);
         }
         catch (TaskCanceledException) { }
     }
-    private async void Table_ResetActionHandled(object sender, ResetActionEventArgs e)
+    private async void Table_ClientDisconnected(object sender, Client e)
     {
         try
         {
-            if (e.ResetHappened)
+            if (Client != e)
+            {
+                if (e.Player != Player.None)
+                    await JSRuntime.InvokeVoidAsync("playSound", SoundNames.OpponentDisconnected);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (TaskCanceledException) { }
+    }
+    private async void Table_SideSwapActionHandled(object sender, ActionEventArgs e)
+    {
+        try
+        {
+            if (e.State == ActionEventArgs.ActionState.Completed)
+                await JSRuntime.InvokeVoidAsync("setOrientation", Client.Player.ToString().ToLower());
+            else if (e.State == ActionEventArgs.ActionState.Initiated && e.Actor == ~Client.Player)
+                await JSRuntime.InvokeVoidAsync("playSound", SoundNames.IncomingActionRequest);
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (TaskCanceledException) { }
+    }
+    private async void Table_ResetActionHandled(object sender, ActionEventArgs e)
+    {
+        try
+        {
+            if (e.State == ActionEventArgs.ActionState.Completed)
             {
                 await JSRuntime.InvokeVoidAsync("setPosition", Table.Game.GetFen().Split()[0]);
                 await JSRuntime.InvokeVoidAsync("highlightSquares", "", "");
             }
+            else if (e.State == ActionEventArgs.ActionState.Initiated && e.Actor == ~Client.Player)
+                await JSRuntime.InvokeVoidAsync("playSound", SoundNames.IncomingActionRequest);
             await InvokeAsync(StateHasChanged);
         }
         catch (TaskCanceledException) { }
@@ -176,5 +190,25 @@
     {
         Table.Disconnect(Client);
         System.Diagnostics.Debug.WriteLine($"{Client.Id} disconnected.");
+    }
+    internal static class SoundNames
+    {
+        public const string Check = "audio-check";
+        public const string Capture = "audio-capture";
+        public const string Summon = "audio-promote";
+        public const string MoveOpponent = "audio-move-opponent";
+        public const string MoveSelf = "audio-move-self";
+        public const string OpponentJoined = "audio-game-start";
+        public const string OpponentDisconnected = "audio-game-end";
+        public const string IncomingActionRequest = "audio-notify";
+
+        public static string GetMoveSoundName(MoveEventArgs e, Player clientPlayer)
+        {
+            if (e.Type.HasFlag(MoveType.Check)) return Check;
+            if (e.Type.HasFlag(MoveType.Capture)) return Capture;
+            if (e.Type.HasFlag(MoveType.Summon)) return Summon;
+            if (e.Player != clientPlayer) return MoveOpponent;
+            return MoveSelf;
+        }
     }
 }

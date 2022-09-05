@@ -30,20 +30,20 @@ namespace Piecemaker.Engine
             Type = moveType;
         }
     }
-    public class SideSwapActionEventArgs : EventArgs
+    public class ActionEventArgs : EventArgs
     {
-        public bool SideSwapHappened { get; set; }
-        public SideSwapActionEventArgs(bool sideSwapHappened)
+        public Player Actor { get; set; }
+        public ActionState State { get; set; }
+        public ActionEventArgs(ActionState state, Player actor)
         {
-            SideSwapHappened = sideSwapHappened;
+            State = state;
+            Actor = actor;
         }
-    }
-    public class ResetActionEventArgs : EventArgs
-    {
-        public bool ResetHappened { get; set; }
-        public ResetActionEventArgs(bool resetHappened)
+        public enum ActionState
         {
-            ResetHappened = resetHappened;
+            Initiated,
+            Cancelled,
+            Completed
         }
     }
 }
