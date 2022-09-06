@@ -146,12 +146,9 @@
     {
         try
         {
-            if (Client != e)
-            {
-                if (e.Player != Player.None)
-                    await JSRuntime.InvokeVoidAsync("playSound", SoundNames.OpponentDisconnected);
-                await InvokeAsync(StateHasChanged);
-            }
+            if (e.Player != Player.None)
+                await JSRuntime.InvokeVoidAsync("playSound", SoundNames.OpponentDisconnected);
+            await InvokeAsync(StateHasChanged);
         }
         catch (TaskCanceledException) { }
     }
