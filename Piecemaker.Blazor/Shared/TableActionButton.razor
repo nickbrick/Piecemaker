@@ -41,11 +41,11 @@
             case TableAction.SwapSides:
                 Text = () =>
                 {
-                    if (Context.Table.SideSwapInitiator == Context.Client.Player)
+                    if (Context.Table.SideSwapInitiator == Context.Client.Player && !IsDisabled())
                         return "Cancel side swap request";
-                    else if (Context.Table.SideSwapInitiator == ~Context.Client.Player)
+                    else if (Context.Table.SideSwapInitiator == ~Context.Client.Player && !IsDisabled())
                         return "Accept side swap request";
-                    else if (Context.Table.PlayingClientsCount == 2)
+                    else if (Context.Table.PlayingClientsCount == 2 )
                         return "Ask to swap sides";
                     else
                         return "Change side";
@@ -56,7 +56,7 @@
                         || !(Context.Table.Status == Status.Open || Context.Table.Status == Status.Closed || Context.Table.Status == Status.Ready);
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, SwapSides);
-                IsEmphasized = () => { return Context.Table.SideSwapInitiator == ~Context.Client.Player; };
+                IsEmphasized = () => { return !IsDisabled() && Context.Table.SideSwapInitiator == ~Context.Client.Player; };
                 IsHidden = () => { return Context.Client.Player == ChessDotCore.Player.None; };
                 break;
             case TableAction.Reset:
@@ -77,25 +77,29 @@
                     return (Context.Table.Status == Status.Open || Context.Table.Status == Status.Ready || Context.Table.Status == Status.Closed);
                 };
                 OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, Reset);
-                IsEmphasized = () => { return Context.Table.ResetInitiator == ~Context.Client.Player; };
+                IsEmphasized = () => { return !IsDisabled() && Context.Table.ResetInitiator == ~Context.Client.Player; };
                 IsHidden = () => { return Context.Client.Player == ChessDotCore.Player.None; };
                 break;
         }
     }
     private void FindTable()
     {
-        NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrDefault().Id.ToString("x")}", true);
+        if (!IsHidden() && !IsDisabled())
+            NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrDefault().Id.ToString("x")}", true);
     }
     private void OpenCloseTable()
     {
-        Context.Table.OpenClose();
+        if (!IsHidden() && !IsDisabled())
+            Context.Table.OpenClose();
     }
     private void SwapSides()
     {
-        Context.Table.HandleSideSwapAction(Context.Client.Player);
+        if (!IsHidden() && !IsDisabled())
+            Context.Table.HandleSideSwapAction(Context.Client.Player);
     }
     private void Reset()
     {
-        Context.Table.HandleResetAction(Context.Client.Player);
+        if (!IsHidden() && !IsDisabled())
+            Context.Table.HandleResetAction(Context.Client.Player);
     }
 }
