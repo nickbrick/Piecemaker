@@ -946,16 +946,19 @@ namespace ChessDotCore
 
             var sanBuilder = new StringBuilder();
 
-            if (!(movingPiece is Pawn))
-            {
-                sanBuilder.Append(char.ToUpperInvariant(movingPiece.GetFenCharacter()));
-            }
-            else if (isCapture)
-            {
-                sanBuilder.Append(move.OriginalPosition.File.ToString().ToLowerInvariant());
-                needsUnambigFile = false;
-                needsUnambigRank = false;
-            }
+            // [Piecemaker] pretty SAN
+            //if (!(movingPiece is Pawn))
+            //{
+            sanBuilder.Append(movingPiece.GetUnicodeGlyph());
+            //sanBuilder.Append(char.ToUpperInvariant(movingPiece.GetFenCharacter()));
+            //}
+            //else
+            //if (isCapture)
+            //{
+            //    sanBuilder.Append(move.OriginalPosition.File.ToString().ToLowerInvariant());
+            //    needsUnambigFile = false;
+            //    needsUnambigRank = false;
+            //}
             if (needsUnambigFile)
             {
                 sanBuilder.Append(move.OriginalPosition.File.ToString().ToLowerInvariant());
@@ -967,6 +970,11 @@ namespace ChessDotCore
             if (isCapture)
             {
                 sanBuilder.Append("x");
+            }
+            // [Piecemaker]
+            else if (move.IsSummon)
+            {
+                sanBuilder.Append("*");
             }
             sanBuilder.Append(move.NewPosition.ToString().ToLowerInvariant());
             if (move.Promotion.HasValue)

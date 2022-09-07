@@ -4,13 +4,65 @@
 @using Piecemaker.Blazor.Shared;
 <h3>Table @Table.Id.ToString("x"): @Table.Status</h3>
 <div id="myBoard" style="width: 100%;"></div>
-<div style="display:flex; flex-direction:column;">
-    <CascadingValue Value="@this">
-        <TableActionButton Action="TableActionButton.TableAction.FindNew"></TableActionButton>
-        <TableActionButton Action="TableActionButton.TableAction.OpenClose"></TableActionButton>
-        <TableActionButton Action="TableActionButton.TableAction.SwapSides"></TableActionButton>
-        <TableActionButton Action="TableActionButton.TableAction.Reset"></TableActionButton>
-    </CascadingValue>
+<div class="dashboard">
+    <div class="buttons">
+        <CascadingValue Value="@this">
+            <TableActionButton Action="TableActionButton.TableAction.FindNew"></TableActionButton>
+            <TableActionButton Action="TableActionButton.TableAction.OpenClose"></TableActionButton>
+            <TableActionButton Action="TableActionButton.TableAction.SwapSides"></TableActionButton>
+            <TableActionButton Action="TableActionButton.TableAction.Reset"></TableActionButton>
+        </CascadingValue>
+    </div>
+    <div class="moves-wrapper">
+        <div class="moves">
+            @for (int i = 0; i < Table.Game.Moves.Count; i += 2)
+            {
+                    <span class="number">@(i/2+1).</span>
+                    <span class="half-move-white">@Table.Game.Moves[i].SAN</span>
+                    string second = Table.Game.Moves.ElementAtOrDefault(i + 1)?.SAN ?? "";
+                    <span class="half-move-black">@second</span>
+            }
+        </div>
+    </div>
+    <!--<div class="moves-wrapper">
+        <div class="moves">
+            <span class="number">1.</span>--><!--!-->
+            <!--<span class="half-move-white">♔e2</span>--><!--!-->
+            <!--<span class="half-move-black">♚e7</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">2.</span>--><!--!-->
+            <!--<span class="half-move-white">♙*d3</span>--><!--!-->
+            <!--<span class="half-move-black">♟*d6</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">3.</span>--><!--!-->
+            <!--<span class="half-move-white">♙*f3</span>--><!--!-->
+            <!--<span class="half-move-black">♟*e6</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">4.</span>--><!--!-->
+            <!--<span class="half-move-white">♙d4</span>--><!--!-->
+            <!--<span class="half-move-black">♟e5</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">5.</span>--><!--!-->
+            <!--<span class="half-move-white">♙fd4</span>--><!--!-->
+            <!--<span class="half-move-black">♟ge5</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">6.</span>--><!--!-->
+            <!--<span class="half-move-white">♙d4</span>--><!--!-->
+            <!--<span class="half-move-black">♟e5</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">7.</span>--><!--!-->
+            <!--<span class="half-move-white">♙d4</span>--><!--!-->
+            <!--<span class="half-move-black">♟e5</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">8.</span>--><!--!-->
+            <!--<span class="half-move-white">♙f4</span>--><!--!-->
+            <!--<span class="half-move-black">♟d5</span>--><!--!-->
+            <!--!-->
+            <!--<span class="number">9.</span>--><!--!-->
+            <!--<span class="half-move-white">♙dxe5</span>--><!--!-->
+            <!--<span class="half-move-black"></span>--><!--!-->
+        <!--</div>
+    </div>-->
 </div>
 <audio id="@SoundNames.Check" style="display:none;" src="/webm/move-check.webm"></audio>
 <audio id="@SoundNames.Capture" style="display:none;" src="/webm/capture.webm"></audio>
@@ -129,7 +181,8 @@
             $"Playing Tables: {PiecemakerGame.PlayingTables}",
             $"Paused Tables: {PiecemakerGame.PausedTables}",
             $"Finished Tables: {PiecemakerGame.FinishedTables}",
-            $"Empty Tables: {PiecemakerGame.EmptyTables}"
+            $"Empty Tables: {PiecemakerGame.EmptyTables}",
+            $"Move history: {String.Join(" ", Table.Game.Moves)}"
         };
     }
     private async void Table_ClientJoined(object sender, Client e)
@@ -147,8 +200,10 @@
         try
         {
             if (e.Player != Player.None)
+            {
                 await JSRuntime.InvokeVoidAsync("playSound", SoundNames.OpponentDisconnected);
-            await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
+            }
         }
         catch (TaskCanceledException) { }
     }

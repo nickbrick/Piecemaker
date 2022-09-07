@@ -1,23 +1,11 @@
 .game-container {
-    max-width: 400px;
+    max-width: 448px;
     display: flex;
     flex-direction: column;
     margin: auto;
 }
 
-.button {
-    height: 4ex;
-    margin: 3px;
-    border-radius: 2ex;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-    .button.emphasis {
-        background-color: #f0d9b5;
-    }
-
+/*chessboard*/
 .highlight {
     background: linear-gradient(0deg, #ff08, #ff08);
 }
@@ -31,7 +19,6 @@
 }
 
 span {
-    user-select: none;
 }
 
     span.locked {
@@ -66,6 +53,7 @@ span {
     align-items: center;
     align-content: center;
     justify-content: center;
+    pointer-events: none;
 }
 
     .piece-cost.piece-cost-white {
@@ -78,6 +66,10 @@ span {
         color: white;
         background-color: black;
         border-color: white;
+    }
+
+    .piece-cost span {
+        user-select: none;
     }
 
 .mana-pool {
@@ -99,4 +91,63 @@ span {
 
     .mana-pool.mana-pool-black {
         color: white;
+    }
+
+    .mana-pool span {
+        user-select: none;
+    }
+
+/*dashboard*/
+.dashboard {
+    display: flex;
+    height: 19ex;
+}
+
+.buttons {
+    flex: 5;
+    display: flex;
+    flex-direction: column;
+}
+
+    .buttons .button {
+        height: 4ex;
+        margin: 3px;
+        border-radius: 2ex;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+        .buttons .button.emphasis {
+            background-color: #f0d9b5;
+        }
+
+.moves-wrapper {
+    flex: 3;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column-reverse;
+    align-content: flex-end;
+}
+
+.moves {
+    font-family: monospace;
+    display: grid;
+}
+
+    .moves span {
+    }
+
+    .moves .number {
+        grid-column: 1;
+        min-width: 4ex;
+        max-width: 5ex;
+    }
+
+    .moves .half-move-white {
+        grid-column: 2;
+    }
+
+    .moves .half-move-black {
+        grid-column: 3;
     }
