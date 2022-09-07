@@ -98,9 +98,15 @@ span {
     }
 
 /*dashboard*/
+@media only screen and (max-width: 500px) {
+    .dashboard {
+        flex-direction:column;
+        height: 36ex;
+    }
+
+}
 .dashboard {
     display: flex;
-    height: 19ex;
 }
 
 .buttons {
@@ -128,6 +134,8 @@ span {
     display: flex;
     flex-direction: column-reverse;
     align-content: flex-end;
+    height: fit-content;
+    max-height: 19ex;
 }
 
 .moves {
