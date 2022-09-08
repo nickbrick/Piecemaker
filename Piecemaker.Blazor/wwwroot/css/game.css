@@ -37,6 +37,10 @@ span {
     display: inline-flex;
 }
 
+.piece-417db {
+    touch-action: none;
+}
+
 .piece-cost {
     text-align: center;
     top: -50%;
@@ -56,21 +60,21 @@ span {
     pointer-events: none;
 }
 
-    .piece-cost.piece-cost-white {
-        color: black;
-        background-color: white;
-        border-color: black;
-    }
+.piece-cost.piece-cost-white {
+    color: black;
+    background-color: white;
+    border-color: black;
+}
 
-    .piece-cost.piece-cost-black {
-        color: white;
-        background-color: black;
-        border-color: white;
-    }
+.piece-cost.piece-cost-black {
+    color: white;
+    background-color: black;
+    border-color: white;
+}
 
-    .piece-cost span {
-        user-select: none;
-    }
+.piece-cost span {
+    user-select: none;
+}
 
 .mana-pool {
     text-align: center;
@@ -100,11 +104,11 @@ span {
 /*dashboard*/
 @media only screen and (max-width: 500px) {
     .dashboard {
-        flex-direction:column;
+        flex-direction: column;
         height: 36ex;
     }
-
 }
+
 .dashboard {
     display: flex;
 }
