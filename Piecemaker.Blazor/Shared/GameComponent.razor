@@ -85,7 +85,11 @@
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower(), LastMove, Table.Game.WhoseTurn.ToString().ToLower());
+            await JSRuntime.InvokeVoidAsync("init",
+                Table.Game.GetFen(), Client.Player.ToString().ToLower(),
+                LastMove,
+                Table.Game.WhoseTurn.ToString().ToLower()
+                );
             await InitGameComponentInstance();
         }
         await JSRuntime.InvokeVoidAsync("setValidMoves",
@@ -95,13 +99,14 @@
             Table.Game.BlackSummonablePieces.Select(s => "b" + s.ToUpper()).ToList())
         );
         await JSRuntime.InvokeVoidAsync("updateMana", GetGameManasAndCosts());
-
+        await UpdateTitle();
     }
     private async Task InitGameComponentInstance()
     {
         var dotNetObjRef = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("registerGameComponentObject", dotNetObjRef);
     }
+
     [JSInvokable("MakeMove")]
     public async Task<bool> MakeMove(string move)
     {
@@ -112,20 +117,6 @@
         }
         await InvokeAsync(StateHasChanged);
         return result;
-    }
-    private async void Table_ValidMoveWasMade(object sender, MoveEventArgs e)
-    {
-        try
-        {
-            System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
-            await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
-            await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
-            await JSRuntime.InvokeVoidAsync("playSound", SoundNames.GetMoveSoundName(e, Client.Player));
-
-            System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
-            await InvokeAsync(StateHasChanged);
-        }
-        catch (TaskCanceledException) { }
     }
 
     private Dictionary<string, int> GetGameManasAndCosts()
@@ -188,6 +179,26 @@
                 return "";
         }
     }
+    private async Task UpdateTitle()
+    {
+        bool isNotifying = (Table.Status == Status.Playing || Table.Status == Status.Ready) && Table.Game.WhoseTurn == Client.Player;
+        await JsRuntime.InvokeVoidAsync("updateTitle", isNotifying);
+    }
+
+    private async void Table_ValidMoveWasMade(object sender, MoveEventArgs e)
+    {
+        try
+        {
+            System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
+            await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
+            await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
+            await JSRuntime.InvokeVoidAsync("playSound", SoundNames.GetMoveSoundName(e, Client.Player));
+
+            System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (TaskCanceledException) { }
+    }
     private async void Table_ClientJoined(object sender, Client e)
     {
         try
@@ -239,6 +250,7 @@
     }
     private async void Table_StatusChanged(object sender, Status e)
     {
+        await UpdateTitle();
         await InvokeAsync(StateHasChanged);
     }
     void IDisposable.Dispose()

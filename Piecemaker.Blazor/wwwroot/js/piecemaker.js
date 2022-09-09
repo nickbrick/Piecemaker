@@ -17,7 +17,6 @@ function init(fen, player_, lastMove, whoseMove_) {
         orientation: player_
     });
     highlightSquares(lastMove.split('-')[0], lastMove.split('-')[1]);
-    updateTitle();
 }
 function onDragStart(source, piece, position, orientation) {
     let from = translateSource(source, piece);
@@ -64,7 +63,6 @@ function setValidMoves(moves, player, summonables) {
         $(`.spare-pieces-7492f img[data-piece="${x}"]`).removeClass('locked');
         $(`.spare-pieces-7492f .piece-cost-${x}`).removeClass('locked');
     });
-    updateTitle();
 }
 function highlightSquares(from, to) {
     $('.square-55d63').removeClass('highlight');
@@ -84,6 +82,6 @@ function setOrientation(player_) {
     player = player_[0];
 }
 
-function updateTitle() {
-    document.title = (whoseMove === player ? '\u25CF ' : '') + 'Piecemaker' + $('.table-id').text();
+function updateTitle(isNotifying) {
+    document.title = (isNotifying ? '\u25CF ' : '') + 'Piecemaker' + $('.table-id').text();
 }
