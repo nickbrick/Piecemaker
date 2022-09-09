@@ -3,7 +3,7 @@
 @using ChessDotCore;
 @using Piecemaker.Blazor.Shared;
 <div class="header">
-    <img class="logo" src="/img/mana-white.png" />
+    <img class="logo" src="/img/mana-white.png" alt="Piecemaker" />
     <h3 class="table-id" onclick="navigator.clipboard.writeText(window.location.href);">/@Table.Id.ToString("x")</h3>
     <p class="status-message">@StatusMessage</p>
 </div>
@@ -37,14 +37,16 @@
         </div>
     </div>
 </div>
-<audio id="@SoundNames.Check" style="display:none;" src="/webm/move-check.webm"></audio>
-<audio id="@SoundNames.Capture" style="display:none;" src="/webm/capture.webm"></audio>
-<audio id="@SoundNames.Summon" style="display:none;" src="/webm/promote.webm"></audio>
-<audio id="@SoundNames.MoveOpponent" style="display:none;" src="/webm/move-opponent.webm"></audio>
-<audio id="@SoundNames.MoveSelf" style="display:none;" src="/webm/move-self.webm"></audio>
-<audio id="@SoundNames.OpponentJoined" style="display:none;" src="/webm/game-start.webm"></audio>
-<audio id="@SoundNames.OpponentDisconnected" style="display:none;" src="/webm/game-end.webm"></audio>
-<audio id="@SoundNames.IncomingActionRequest" style="display:none;" src="/webm/notify.webm"></audio>
+<div style="display:none;">
+    <audio id="@SoundNames.Check" src="/webm/move-check.webm"></audio>
+    <audio id="@SoundNames.Capture" src="/webm/capture.webm"></audio>
+    <audio id="@SoundNames.Summon" src="/webm/promote.webm"></audio>
+    <audio id="@SoundNames.MoveOpponent" src="/webm/move-opponent.webm"></audio>
+    <audio id="@SoundNames.MoveSelf" src="/webm/move-self.webm"></audio>
+    <audio id="@SoundNames.OpponentJoined" src="/webm/game-start.webm"></audio>
+    <audio id="@SoundNames.OpponentDisconnected" src="/webm/game-end.webm"></audio>
+    <audio id="@SoundNames.IncomingActionRequest" src="/webm/notify.webm"></audio>
+</div>
 <ul>
     @foreach (var line in DebugState)
     {
@@ -173,7 +175,7 @@
             case Status.Ready:
                 return StatusMessages.Ready;
             case Status.Playing:
-                return $"{Table.Game.WhoseTurn} to move...";
+                return $"{Table.Game.WhoseTurn} to move.";
             case Status.Paused:
                 return StatusMessages.Paused;
             case Status.Finished:

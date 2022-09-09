@@ -873,7 +873,7 @@
       if (isString(id) && id !== '') {
         html += 'id="' + id + '" '
       }
-      html += 'alt="" ' +
+      html += `alt="${piece}" ` +
         'class="{piece}" ' +
         'data-piece="' + piece + '" ' +
         'style="width:' + squareSize + 'px;' + 'height:' + squareSize + 'px;'
@@ -896,7 +896,7 @@
         var html = ''
         // [Piecemaker] mana pools
         html += `<div style="width:${squareSize}px;height:${squareSize}px;">`;
-        html += `<img style="width:${squareSize}px;height:${squareSize}px;" src="img/mana-${color}.png" draggable="false"></img>`;
+        html += `<img style="width:${squareSize}px;height:${squareSize}px;" src="img/mana-${color}.png" draggable="false" alt="${color} mana"></img>`;
         html += `<div class="mana-pool mana-pool-${color}">`;
         html += `<span class="mana-${color}"></span>`;
         html += '</div>';
