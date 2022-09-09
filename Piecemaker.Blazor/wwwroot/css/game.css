@@ -8,9 +8,11 @@
     margin: auto;
 }
 /*header*/
-.header{
-    display:grid;
-    justify-content:start;
+.header {
+    display: grid;
+    justify-content: start;
+    grid-template-columns: 1.5fr 5.5fr 1fr;
+    grid-template-rows: 1fr 1fr;
 }
 .logo{
     grid-row-start:1;
@@ -31,10 +33,20 @@
     .table-id:active::after {
         content: ' Copied';
     }
+.question {
+    grid-row: 1;
+    grid-column: 3;
+    width: 2em;
+    height: 2em;
+    margin-inline: auto;
+    margin-block:auto;
+    border-radius:1ex;
+}
 .status-message {
     font-size: small;
     grid-row: 2;
-    grid-column: 2;
+    grid-column-start: 2;
+    grid-column-end: 4;
 }
 /*chessboard*/
 .highlight {

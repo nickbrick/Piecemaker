@@ -5,6 +5,7 @@
 <div class="header">
     <img class="logo" src="/img/mana-white.png" alt="Piecemaker" />
     <h3 class="table-id" onclick="navigator.clipboard.writeText(window.location.href);">/@Table.Id.ToString("x")</h3>
+    <button class="question" @onclick="()=>{ Help.Show(); }">?</button>
     <p class="status-message">@StatusMessage</p>
 </div>
 <Help @ref="@Help"></Help>
