@@ -7,6 +7,7 @@
     <h3 class="table-id" onclick="navigator.clipboard.writeText(window.location.href);">/@Table.Id.ToString("x")</h3>
     <p class="status-message">@StatusMessage</p>
 </div>
+<Help @ref="@Help"></Help>
 <div id="chessboard" style="width: 100%;"></div>
 <div class="dashboard">
     <div class="buttons">
@@ -63,6 +64,7 @@
     private string LastMove => Table.Game.Moves.LastOrDefault()?.ToString() ?? "";
     private Player Winner => Table.Game.IsCheckmated(Player.White) ? Player.Black : Table.Game.IsCheckmated(Player.Black) ? Player.White : Player.None;
     private string StatusMessage => GetStatusMessage();
+    private Help Help;
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
     public GameComponent()

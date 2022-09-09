@@ -1,0 +1,43 @@
+﻿@if (Visible)
+{
+    <div class="backdrop"></div>
+    <div class="help">
+        <div class="help-inner">
+            <h3>Help</h3>
+            <p>
+                Piecemaker is a chess variant where your king uses magical energy to create his soldiers.
+            </p>
+            <p>Piecemaker rules:</p>
+            <ul>
+                <li>Start with 2 Mana.</li>
+                <li>After moving a piece that's already on the board, gain 2 Mana.</li>
+                <li>Instead of moving an existing piece, you may Summon a new piece on an empty square, 8-adjacent to your king, if you have enough Mana.</li>
+                <li>Base Mana costs for each piece are ♕:9&nbsp;♖:5&nbsp;♗:3&nbsp;♘:3&nbsp;♙:1</li>
+                <li>After Summoning a piece, its Mana cost increases by its base Mana cost. For example, the first bishop Summoned costs&nbsp;3&nbsp;Mana, the second&nbsp;6, the third&nbsp;9 and so on.</li>
+                <li>When capturing a piece, you gain Mana equal to its base cost (plus 2 for moving your piece).</li>
+                <li>Capturing by Summoning is considered illegal. </li>
+            </ul>
+            <p>Deviations from standard chess rules:</p>
+            <ul>
+                <li>Checking the enemy king is illegal, unless it is also a mate, in which case the game is won.</li>
+                <li>The starting position includes only the two kings.</li>
+                <li>Pawn double advance is illegal (thus en&nbsp;passant does not apply). Pawn promotion is illegal. Pawns may exist on any rank.</li>
+                <li>Castling does not apply.</li>
+                <li>Threefold repetition and 50 move rule do not apply.</li>
+            </ul>
+            <button class="button" @onclick="Hide">Okay</button>
+        </div>
+    </div>
+}
+@code {
+    private bool Visible { get; set; }
+    public void Hide()
+    {
+        Visible = false;
+    }
+    public void Show()
+    {
+        Visible = true;
+        StateHasChanged();
+    }
+}

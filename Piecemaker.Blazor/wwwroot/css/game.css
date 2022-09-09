@@ -1,5 +1,8 @@
+:root{
+    --game-width: 448px;
+}
 .game-container {
-    max-width: 448px;
+    max-width: var(--game-width);
     display: flex;
     flex-direction: column;
     margin: auto;
@@ -140,7 +143,7 @@ span {
     flex-direction: column;
 }
 
-    .buttons .button {
+.button {
         height: 4ex;
         margin: 3px;
         border-radius: 1ex;
@@ -149,7 +152,7 @@ span {
         white-space: nowrap;
     }
 
-        .buttons .button.emphasis {
+.button.emphasis {
             background-color: #f0d9b5;
         }
 
@@ -218,6 +221,40 @@ span {
         grid-column: 3;
     }
 
+/*help*/
+body:has(.help){
+    overflow:hidden;
+}
+.help {
+    max-height: 95vh;
+    margin: 1em;
+    position: fixed;
+    left: auto;
+    max-width: calc(var(--game-width) - 2em);
+    z-index: 1;
+    background-color: white;
+    padding: 2em;
+    border: 2px solid black;
+    border-radius: 1ex;
+    overflow-y: scroll;
+    font-size: smaller;
+    box-shadow: 4px 4px #0008;
+}
+.help .button {
+float: right;
+}
+.backdrop {
+    background-color: #0008;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+/*mobile*/
+
 @media only screen and (max-width: 500px) {
     .dashboard {
         flex-direction: column;
@@ -231,5 +268,10 @@ span {
     .moves-border {
         margin-top: 0;
         flex: 1;
+    }
+
+    .help {
+        left: 0;
+        top: 0;
     }
 }
