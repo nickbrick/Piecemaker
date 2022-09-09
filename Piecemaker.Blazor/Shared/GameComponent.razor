@@ -2,7 +2,11 @@
 @inject IJSRuntime JsRuntime
 @using ChessDotCore;
 @using Piecemaker.Blazor.Shared;
-<h3>Table @Table.Id.ToString("x"): @Table.Status</h3>
+<div class="header">
+    <img class="logo" src="/img/mana-white.png" />
+    <h3 class="table-id" onclick="navigator.clipboard.writeText(window.location.href);">/@Table.Id.ToString("x")</h3>
+    <p class="status-message">@StatusMessage</p>
+</div>
 <div id="myBoard" style="width: 100%;"></div>
 <div class="dashboard">
     <div class="buttons">
@@ -13,56 +17,25 @@
             <TableActionButton Action="TableActionButton.TableAction.Reset"></TableActionButton>
         </CascadingValue>
     </div>
-    <div class="moves-wrapper">
-        <div class="moves">
-            @for (int i = 0; i < Table.Game.Moves.Count; i += 2)
-            {
-                    <span class="number">@(i/2+1).</span>
+    <div class="moves-border">
+        <div class="moves-wrapper">
+            <div class="moves">
+                @for (int i = 0; i < Table.Game.Moves.Count; i += 2)
+                {
+                    <span class="number">@(i / 2 + 1).</span>
                     <span class="half-move-white">@Table.Game.Moves[i].SAN</span>
                     string second = Table.Game.Moves.ElementAtOrDefault(i + 1)?.SAN ?? "";
                     <span class="half-move-black">@second</span>
-            }
+                }
+                @for (int i = 6- (12 - Table.Game.Moves.Count) / 2; i < 6 ; i++)
+                {
+                    <span class="number">@(i+1).</span>
+                    <span class="half-move-white"></span>
+                    <span class="half-move-black"></span>
+                }
+            </div>
         </div>
     </div>
-    <!--<div class="moves-wrapper">
-        <div class="moves">
-            <span class="number">1.</span>--><!--!-->
-            <!--<span class="half-move-white">♔e2</span>--><!--!-->
-            <!--<span class="half-move-black">♚e7</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">2.</span>--><!--!-->
-            <!--<span class="half-move-white">♙*d3</span>--><!--!-->
-            <!--<span class="half-move-black">♟*d6</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">3.</span>--><!--!-->
-            <!--<span class="half-move-white">♙*f3</span>--><!--!-->
-            <!--<span class="half-move-black">♟*e6</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">4.</span>--><!--!-->
-            <!--<span class="half-move-white">♙d4</span>--><!--!-->
-            <!--<span class="half-move-black">♟e5</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">5.</span>--><!--!-->
-            <!--<span class="half-move-white">♙fd4</span>--><!--!-->
-            <!--<span class="half-move-black">♟ge5</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">6.</span>--><!--!-->
-            <!--<span class="half-move-white">♙d4</span>--><!--!-->
-            <!--<span class="half-move-black">♟e5</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">7.</span>--><!--!-->
-            <!--<span class="half-move-white">♙d4</span>--><!--!-->
-            <!--<span class="half-move-black">♟e5</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">8.</span>--><!--!-->
-            <!--<span class="half-move-white">♙f4</span>--><!--!-->
-            <!--<span class="half-move-black">♟d5</span>--><!--!-->
-            <!--!-->
-            <!--<span class="number">9.</span>--><!--!-->
-            <!--<span class="half-move-white">♙dxe5</span>--><!--!-->
-            <!--<span class="half-move-black"></span>--><!--!-->
-        <!--</div>
-    </div>-->
 </div>
 <audio id="@SoundNames.Check" style="display:none;" src="/webm/move-check.webm"></audio>
 <audio id="@SoundNames.Capture" style="display:none;" src="/webm/capture.webm"></audio>
@@ -87,6 +60,7 @@
     private string SimpleFen => Table.Game.GetFen().Split()[0];
     private string LastMove => Table.Game.Moves.LastOrDefault()?.ToString() ?? "";
     private Player Winner => Table.Game.IsCheckmated(Player.White) ? Player.Black : Table.Game.IsCheckmated(Player.Black) ? Player.White : Player.None;
+    private string StatusMessage => GetStatusMessage();
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
     public GameComponent()
@@ -185,6 +159,30 @@
             $"Move history: {String.Join(" ", Table.Game.Moves)}"
         };
     }
+    public string GetStatusMessage()
+    {
+        if (Client.Player == Player.None)
+            return "You are spectating.";
+
+        switch (Table.Status)
+        {
+            case Status.Open:
+                return StatusMessages.Open;
+            case Status.Closed:
+                return StatusMessages.Closed;
+            case Status.Ready:
+                return StatusMessages.Ready;
+            case Status.Playing:
+                return $"{Table.Game.WhoseTurn} to move...";
+            case Status.Paused:
+                return StatusMessages.Paused;
+            case Status.Finished:
+                return $"{Winner} wins.";
+
+            default:
+                return "";
+        }
+    }
     private async void Table_ClientJoined(object sender, Client e)
     {
         try
@@ -262,5 +260,12 @@
             if (e.Player != clientPlayer) return MoveOpponent;
             return MoveSelf;
         }
+    }
+    internal static class StatusMessages
+    {
+        public const string Open = "This table is open. Wait for an opponent or close the table.";
+        public const string Closed = "This table is closed. Copy the link to invite your friends.";
+        public const string Ready = "Ready for the first move.";
+        public const string Paused = "Opponent left. They can rejoin with the link.";
     }
 }

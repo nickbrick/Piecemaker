@@ -4,7 +4,35 @@
     flex-direction: column;
     margin: auto;
 }
+/*header*/
+.header{
+    display:grid;
+    justify-content:start;
+}
+.logo{
+    grid-row-start:1;
+    grid-row-end:3;
+    grid-column:1;
+}
+.table-id {
+    cursor: pointer;
+    grid-row:1;
+    grid-column:2;
+}
 
+    .table-id:hover::after {
+        content: ' Copy';
+        font-size: small;
+        vertical-align: middle;
+    }
+    .table-id:active::after {
+        content: ' Copied';
+    }
+.status-message {
+    font-size: small;
+    grid-row: 2;
+    grid-column: 2;
+}
 /*chessboard*/
 .highlight {
     background: linear-gradient(0deg, #ff08, #ff08);
@@ -60,21 +88,21 @@ span {
     pointer-events: none;
 }
 
-.piece-cost.piece-cost-white {
-    color: black;
-    background-color: white;
-    border-color: black;
-}
+    .piece-cost.piece-cost-white {
+        color: black;
+        background-color: white;
+        border-color: black;
+    }
 
-.piece-cost.piece-cost-black {
-    color: white;
-    background-color: black;
-    border-color: white;
-}
+    .piece-cost.piece-cost-black {
+        color: white;
+        background-color: black;
+        border-color: white;
+    }
 
-.piece-cost span {
-    user-select: none;
-}
+    .piece-cost span {
+        user-select: none;
+    }
 
 .mana-pool {
     text-align: center;
@@ -102,13 +130,6 @@ span {
     }
 
 /*dashboard*/
-@media only screen and (max-width: 500px) {
-    .dashboard {
-        flex-direction: column;
-        height: 36ex;
-    }
-}
-
 .dashboard {
     display: flex;
 }
@@ -122,7 +143,7 @@ span {
     .buttons .button {
         height: 4ex;
         margin: 3px;
-        border-radius: 2ex;
+        border-radius: 1ex;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
@@ -132,28 +153,61 @@ span {
             background-color: #f0d9b5;
         }
 
-.moves-wrapper {
+.moves-border {
+    margin-top: 4px;
     flex: 3;
     overflow-y: scroll;
+    overflow-y:overlay;
+    border: 2px solid black;
+    border-radius: 1ex;
+    height: 18ex;
+    display: flex;
+    flex-direction: column-reverse;
+}
+/* width */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #8888;
+    border-radius:2px;
+}
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+.moves-wrapper {
     display: flex;
     flex-direction: column-reverse;
     align-content: flex-end;
-    height: fit-content;
-    max-height: 19ex;
 }
 
 .moves {
     font-family: monospace;
     display: grid;
+    min-height: 3ex;
 }
-
+    .moves > span:nth-child(6n+1),
+    .moves > span:nth-child(6n+2),
+    .moves > span:nth-child(6n+3) {
+        background-color: #f0d9b580;
+    }
     .moves span {
+        background-color: #b5886380;
     }
 
     .moves .number {
         grid-column: 1;
-        min-width: 4ex;
-        max-width: 5ex;
+        min-width: 2em;
+        padding-left: 4px;
     }
 
     .moves .half-move-white {
@@ -163,3 +217,19 @@ span {
     .moves .half-move-black {
         grid-column: 3;
     }
+
+@media only screen and (max-width: 500px) {
+    .dashboard {
+        flex-direction: column;
+        height: 36ex;
+    }
+
+    .buttons {
+        flex: 1;
+    }
+
+    .moves-border {
+        margin-top: 0;
+        flex: 1;
+    }
+}
