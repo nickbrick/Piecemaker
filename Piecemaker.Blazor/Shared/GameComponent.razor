@@ -7,7 +7,7 @@
     <h3 class="table-id" onclick="navigator.clipboard.writeText(window.location.href);">/@Table.Id.ToString("x")</h3>
     <p class="status-message">@StatusMessage</p>
 </div>
-<div id="myBoard" style="width: 100%;"></div>
+<div id="chessboard" style="width: 100%;"></div>
 <div class="dashboard">
     <div class="buttons">
         <CascadingValue Value="@this">
@@ -82,7 +82,7 @@
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower(), LastMove);
+            await JSRuntime.InvokeVoidAsync("init", Table.Game.GetFen(), Client.Player.ToString().ToLower(), LastMove, Table.Game.WhoseTurn.ToString().ToLower());
             await InitGameComponentInstance();
         }
         await JSRuntime.InvokeVoidAsync("setValidMoves",
