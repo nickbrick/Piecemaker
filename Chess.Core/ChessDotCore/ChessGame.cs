@@ -959,6 +959,11 @@ namespace ChessDotCore
             //    needsUnambigFile = false;
             //    needsUnambigRank = false;
             //}
+            if (move.IsSummon) // [Piecemaker] summon is never ambiguous
+            {
+                needsUnambigFile = false;
+                needsUnambigRank = false;
+            }
             if (needsUnambigFile)
             {
                 sanBuilder.Append(move.OriginalPosition.File.ToString().ToLowerInvariant());
