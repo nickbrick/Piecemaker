@@ -16,6 +16,7 @@ function init(fen, player_, lastMove) {
         orientation: player_
     });
     highlightSquares(lastMove.split('-')[0], lastMove.split('-')[1]);
+    document.title = 'Piecemaker'+$('.table-id').text();
 }
 function onDragStart(source, piece, position, orientation) {
     let from = translateSource(source, piece);
