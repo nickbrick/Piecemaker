@@ -33,9 +33,7 @@ function onDrop(source, target, piece) {
     $('.square-55d63').removeClass('capture');
     let from = translateSource(source, piece);
     let move = `${from} ${target}`;
-    console.log(move);
     if (target != 'offboard') {
-        console.log(validMoves.filter(x => x.includes(`${from}-${target}`)).length > 0);
         if (validMoves.filter(x => x.includes(`${from}-${target}`)).length > 0)
             dotNetObjRef.invokeMethodAsync('MakeMove', move);
         else return 'snapback';

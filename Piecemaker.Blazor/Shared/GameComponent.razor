@@ -49,12 +49,6 @@
     <audio id="@SoundNames.OpponentDisconnected" src="/webm/game-end.webm"></audio>
     <audio id="@SoundNames.IncomingActionRequest" src="/webm/notify.webm"></audio>
 </div>
-<ul>
-    @foreach (var line in DebugState)
-    {
-        <li>@line</li>
-    }
-</ul>
 <p>Piecemaker alpha @System.Environment.GetEnvironmentVariable("HEROKU_RELEASE_VERSION")</p>
 @code {
     public Engine.Program PiecemakerGame => Blazor.Program.Piecemaker;
@@ -189,12 +183,10 @@
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine(e.NewPositionSimpleFen);
             await JSRuntime.InvokeVoidAsync("setPosition", e.NewPositionSimpleFen);
             await JSRuntime.InvokeVoidAsync("highlightSquares", e.From, e.To);
             await JSRuntime.InvokeVoidAsync("playSound", SoundNames.GetMoveSoundName(e, Client.Player));
 
-            System.Diagnostics.Debug.WriteLine("Table_MoveWasMade");
             await InvokeAsync(StateHasChanged);
         }
         catch (TaskCanceledException) { }
