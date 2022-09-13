@@ -17,6 +17,8 @@ function init(fen, player_, lastMove, whoseMove_) {
         orientation: player_
     });
     highlightSquares(lastMove.split('-')[0], lastMove.split('-')[1]);
+    $('.piece-417db').on('touchstart', () => { $('body').addClass('unscrollable'); });
+    $('.piece-417db').on('touchend', () => { $('body').removeClass('unscrollable'); });
 }
 function onDragStart(source, piece, position, orientation) {
     let from = translateSource(source, piece);
@@ -79,7 +81,6 @@ function setOrientation(player_) {
     board.orientation(player_);
     player = player_[0];
 }
-
 function updateTitle(isNotifying) {
     document.title = (isNotifying ? '\u25CF ' : '') + 'Piecemaker' + $('.table-id').text();
 }

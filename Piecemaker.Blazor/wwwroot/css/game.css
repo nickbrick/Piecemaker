@@ -1,6 +1,9 @@
 :root{
     --game-width: 448px;
 }
+.unscrollable{
+    overflow:hidden;
+}
 .game-container {
     max-width: var(--game-width);
     display: flex;
