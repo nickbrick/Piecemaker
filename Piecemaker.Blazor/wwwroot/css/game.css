@@ -175,30 +175,23 @@ span {
     margin-top: 4px;
     flex: 3;
     overflow-y: scroll;
-    overflow-y:overlay;
+    overflow-y: overlay;
     border: 2px solid black;
     border-radius: 1ex;
     height: 18ex;
     display: flex;
     flex-direction: column-reverse;
 }
-/* width */
 ::-webkit-scrollbar {
     width: 4px;
 }
-
-/* Track */
 ::-webkit-scrollbar-track {
     background: transparent;
 }
-
-/* Handle */
 ::-webkit-scrollbar-thumb {
     background: #8888;
     border-radius:2px;
 }
-
-    /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
@@ -257,6 +250,9 @@ body:has(.help){
 }
 .help .button {
 float: right;
+}
+.help-innner{
+    display:block;
 }
 .backdrop {
     background-color: #0008;

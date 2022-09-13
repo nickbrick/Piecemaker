@@ -1,6 +1,6 @@
 ﻿@if (Visible)
 {
-    <div class="backdrop"@onclick="()=>{ Visible = false; }"></div>
+    <div class="backdrop" @onclick="()=>{ Visible = false; }"></div>
     <div class="help">
         <div class="help-inner">
             <h3>Help</h3>
@@ -29,7 +29,9 @@
             <p>Piecemaker uses <a href="https://chessboardjs.com/">chessboard.js</a>, <a href="https://github.com/NoNamePro0/Chess.Core">Chess.Core</a>. Sounds from <a href="https://chess.com/">chess.com</a>.</p>
             <p>Thanks to my friend <a href="https://twitch.tv/digitalduck">DigitalDuck</a> for helping develop the rules and test the app.</p>
             <p>My GitHub <a href="https://github.com/nickbrick/Piecemaker">here</a>.</p>
-            <button class="button" @onclick="Hide">Okay</button>
+            <div style="overflow:hidden;">
+                <button class="button" @onclick="Hide">Okay</button>
+            </div>
         </div>
     </div>
 }
