@@ -242,8 +242,12 @@
     }
     private async void Table_StatusChanged(object sender, Status e)
     {
-        await UpdateTitle();
-        await InvokeAsync(StateHasChanged);
+        try
+        {
+            await UpdateTitle();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (TaskCanceledException) { }
     }
     void IDisposable.Dispose()
     {
