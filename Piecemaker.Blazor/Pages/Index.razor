@@ -13,7 +13,7 @@
         int id = 0;
         Int32.TryParse(DesiredGameId, System.Globalization.NumberStyles.HexNumber, null, out id);
         if (id == 0)
-            Table = Piecemaker.Blazor.Program.Piecemaker.GetRandomOpenTableOrDefault();
+            Table = Piecemaker.Blazor.Program.Piecemaker.GetRandomOpenTableOrNew(0);
         else
             Table = Piecemaker.Blazor.Program.Piecemaker.GetTable(id);
         NavManager.NavigateTo($"/{Table.Id.ToString("x")}");

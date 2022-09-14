@@ -85,7 +85,7 @@
     private void FindTable()
     {
         if (!IsHidden() && !IsDisabled())
-            NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrDefault().Id.ToString("x")}", true);
+            NavManager.NavigateTo($"/{Context.PiecemakerGame.GetRandomOpenTableOrNew(Context.Table.Id).Id.ToString("x")}", true);
     }
     private void OpenCloseTable()
     {

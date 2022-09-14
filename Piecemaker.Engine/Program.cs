@@ -10,7 +10,7 @@ namespace Piecemaker.Engine
         private const int DefaultTableId = 0xB0A12D;
         private readonly Random Random = new Random();
         public List<Table> Tables = new List<Table> { new Table(DefaultTableId) };
-        private System.Timers.Timer TableStatusPolling = new System.Timers.Timer(new TimeSpan(0, minutes:5, seconds: 0).TotalMilliseconds);
+        private System.Timers.Timer TableStatusPolling = new System.Timers.Timer(new TimeSpan(0, minutes: 5, seconds: 0).TotalMilliseconds);
         private readonly TimeSpan MaxTableInactivity = new TimeSpan(0, minutes: 10, 0);
         public int AllocatedTables => Tables.Count;
         public int OpenTables => Tables.Count(table => table.Status == Status.Open);
@@ -39,11 +39,22 @@ namespace Piecemaker.Engine
             }
             return table;
         }
-        public Table GetRandomOpenTableOrDefault()
+        public Table GetRandomOpenTableOrNew(int currentTableId)
         {
             var tables = Tables.Where(table => table.Status == Status.Open);
             var count = tables.Count();
-            if (count == 0) return GetTable(DefaultTableId);
+            if (count == 0)
+            {
+                int newId;
+                int tries = 0;
+                do
+                {
+                    newId = Random.Next();
+                    tries += 1;
+                }
+                while (tries > 100 || newId == currentTableId || GetTable(newId).PlayingClientsCount == 2);
+                return GetTable(newId);
+            }
             return tables.ElementAt(Random.Next(count));
         }
     }
