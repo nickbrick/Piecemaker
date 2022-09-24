@@ -29,7 +29,7 @@
                     string second = Table.Game.Moves.ElementAtOrDefault(i + 1)?.SAN ?? "";
                     <span class="half-move-black">@second</span>
                 }
-                @for (int i = 6- (12 - Table.Game.Moves.Count) / 2; i < 6 ; i++)
+                @for (int i = 6 - (12 - Table.Game.Moves.Count) / 2; i < 6; i++)
                 {
                     <span class="number">@(i+1).</span>
                     <span class="half-move-white"></span>
@@ -167,8 +167,8 @@
             case Status.Paused:
                 return StatusMessages.Paused;
             case Status.Finished:
+                if (Winner == Player.None) return "Game drawn.";
                 return $"{Winner} wins.";
-
             default:
                 return "";
         }
