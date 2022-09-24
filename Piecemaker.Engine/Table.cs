@@ -8,6 +8,7 @@ namespace Piecemaker.Engine
     {
         public event EventHandler<MoveEventArgs> ValidMoveWasMade;
         public event EventHandler<Player> PlayerWonByCheckmate;
+        public event EventHandler GameEndedInStalemate;
         public event EventHandler<Client> ClientJoined;
         public event EventHandler<Client> ClientDisconnected;
         public event EventHandler<ActionEventArgs> SideSwapActionHandled;
@@ -46,6 +47,11 @@ namespace Piecemaker.Engine
             if (Game.IsCheckmated(Game.WhoseTurn))
             {
                 PlayerWonByCheckmate?.Invoke(this, e.Player);
+                Status = Status.Finished;
+            }
+            if (Game.IsStalemated(Game.WhoseTurn))
+            {
+                GameEndedInStalemate?.Invoke(this, EventArgs.Empty);
                 Status = Status.Finished;
             }
             LastActivityAt = DateTime.UtcNow;
@@ -178,6 +184,6 @@ namespace Piecemaker.Engine
         Ready,          // Two players in starting position
         Playing,        // Two players and not in starting position, leave it alone
         Paused,         // One player and not in starting position, need url to join
-        Finished        // Checkmate happened
+        Finished        // Checkmate/stalemate happened
     }
 }
