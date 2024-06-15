@@ -1,5 +1,4 @@
-﻿@implements IDisposable
-@inject IJSRuntime JsRuntime
+﻿@inject IJSRuntime JsRuntime
 @using ChessDotCore;
 @using Piecemaker.Blazor.Shared;
 <div class="header">
@@ -111,6 +110,13 @@
         }
         await InvokeAsync(StateHasChanged);
         return result;
+    }
+
+    [JSInvokable("Disconnect")]
+    public async Task Disconnect()
+    {
+        Table.Disconnect(Client);
+        await InvokeAsync(StateHasChanged);
     }
 
     private Dictionary<string, int> GetGameManasAndCosts()
@@ -249,11 +255,7 @@
         }
         catch (TaskCanceledException) { }
     }
-    void IDisposable.Dispose()
-    {
-        Table.Disconnect(Client);
-        System.Diagnostics.Debug.WriteLine($"{Client.Id} disconnected.");
-    }
+
     internal static class SoundNames
     {
         public const string Check = "audio-check";

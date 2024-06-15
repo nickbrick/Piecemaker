@@ -5,6 +5,12 @@ var dotNetObjRef;
 function registerGameComponentObject(dotNetObjRef_) {
     dotNetObjRef = dotNetObjRef_;
 }
+window.onload = function (event) {
+    window.onbeforeunload = function (event) {
+            dotNetObjRef.invokeMethodAsync('Disconnect');
+    };
+};
+
 function init(fen, player_, lastMove, whoseMove_) {
     player = player_[0];
     whoseMove = whoseMove_[0];
