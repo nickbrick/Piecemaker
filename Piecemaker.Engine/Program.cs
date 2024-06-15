@@ -47,12 +47,14 @@ namespace Piecemaker.Engine
             {
                 int newId;
                 int tries = 0;
+                const int maxTries = 100;
                 do
                 {
                     newId = Random.Next();
                     tries += 1;
+                    if (tries > maxTries) break;
                 }
-                while (tries > 100 || newId == currentTableId || GetTable(newId).PlayingClientsCount == 2);
+                while (newId == currentTableId || GetTable(newId).PlayingClientsCount == 2);
                 return GetTable(newId);
             }
             return tables.ElementAt(Random.Next(count));
